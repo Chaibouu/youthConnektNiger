@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 import Loader from "@/components/common/Loader";
 import { authRoutes } from "@/settings/auth-routes";
 import { adminNavigation, collaboratorsNavigation, managerNavigation } from "@/settings/navigation";
-import "../../globals.css";
+import "./globals.css";
 import "./data-tables-css.css";
 import "./satoshi.css";
 
