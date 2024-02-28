@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import themeConfig from "./configs/themeConfis";
 const defaultTheme = require("tailwindcss/defaultTheme");
 
 const config: Config = {
@@ -15,7 +16,7 @@ const config: Config = {
         transparent: "transparent",
         white: "#FFFFFF",
         mont: "#011628",
-        black: "#1C2434",
+        black: `${themeConfig.adminSidebarColor}`,
         "black-2": "#010101",
         body: "#64748B",
         bodydark: "#AEB7C0",

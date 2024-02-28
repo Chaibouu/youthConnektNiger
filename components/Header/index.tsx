@@ -2,6 +2,7 @@ import Link from "next/link";
 import DarkModeSwitcher from "./DarkModeSwitcher";
 import DropdownUser from "./DropdownUser";
 import Image from "next/image";
+import themeConfig from "@/configs/themeConfis";
 
 const Header = (props: {
   sidebarOpen: string | boolean | undefined;
@@ -58,8 +59,8 @@ const Header = (props: {
             <Image
               width={100}
               height={32}
-              src={"/vercel.svg"}
-              alt="Logo"
+              src={`${themeConfig.logoUrl}`}
+              alt={`${themeConfig.appName}`}
             />
           </Link>
         </div>
