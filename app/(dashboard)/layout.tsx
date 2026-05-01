@@ -9,7 +9,6 @@ import { SidebarClear } from "@/components/Sidebarr/SidebarClear/SidebarClear";
 import HeaderClear from "@/components/Sidebarr/SidebarClear/Header";
 import { Sidebar2 } from "@/components/Sidebar2/Sidebar2";
 import { Loader } from "@/components/common/Loader";
-import { ImpersonationBanner } from "@/components/ImpersonationBanner";
 
 export default function DashboardLayout({
   children,
@@ -41,7 +40,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="dark:bg-boxdark-2 dark:text-bodydark">
+    <div className="dashboard-theme dark:bg-boxdark-2 dark:text-bodydark">
       <div className="flex h-screen overflow-hidden">
         {/* <!-- ===== Sidebar Start ===== --> */}
         {/* <Sidebar navigation={adminNavigation} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} /> */}
@@ -50,9 +49,6 @@ export default function DashboardLayout({
 
         {/* <!-- ===== Content Area Start ===== --> */}
         <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
-          {/* Bannière d'impersonation — visible uniquement en mode audit admin */}
-          <ImpersonationBanner />
-
           {/* <!-- ===== Header Start ===== --> */}
           {/* <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} /> */}
           <HeaderClear sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />

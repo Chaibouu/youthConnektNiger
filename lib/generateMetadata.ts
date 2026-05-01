@@ -8,22 +8,28 @@ export async function generateMetadata(): Promise<Metadata> {
 
     return {
       title: {
-        default: appConfig.websiteTitle || "Sahel Coders",
-        template: `%s | ${appConfig.websiteTitle || "Sahel Coders"}`,
+        default: appConfig.websiteTitle || "Youth Connekt Niger",
+        template: `%s | ${appConfig.websiteTitle || "Youth Connekt Niger"}`,
       },
       description:
         appConfig.websiteDescription ||
-        "Plateforme de développement et d'apprentissage pour les développeurs du Sahel",
+        "Plateforme officielle de Youth Connekt Niger. Connecter les jeunes nigériens aux opportunités d'emploi, d'entrepreneuriat et d'engagement citoyen.",
       keywords: [
-        "développement",
-        "programmation",
-        "Sahel",
-        "coders",
-        "formation",
+        "Youth Connekt",
+        "Niger",
+        "Jeunesse",
+        "Entrepreneuriat Niger",
+        "Emploi Niger",
+        "PNUD Niger",
+        "Formation",
+        "Opportunités",
+        "Engagement citoyen",
+        "Youth Connekt Niger",
+        "Plateforme pour l'autonomisation des jeunes au Niger",
       ],
-      authors: [{ name: "Sahel Coders Team" }],
-      creator: "Sahel Coders",
-      publisher: "Sahel Coders",
+      authors: [{ name: "Chaibouu" }],
+      creator: "Chaibouu",
+      publisher: "Chaibouu",
       formatDetection: {
         email: false,
         address: false,
@@ -39,32 +45,32 @@ export async function generateMetadata(): Promise<Metadata> {
         type: "website",
         locale: "fr_FR",
         url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-        title: appConfig.websiteTitle || "Sahel Coders",
+        title: appConfig.websiteTitle || "Youth Connekt Niger",
         description:
           appConfig.websiteDescription ||
-          "Plateforme de développement et d'apprentissage",
-        siteName: appConfig.appName || "Sahel Coders",
+          "Plateforme officielle de Youth Connekt Niger. Connecter les jeunes nigériens aux opportunités d'emploi, d'entrepreneuriat et d'engagement citoyen.",
+        siteName: appConfig.appName || "Youth Connekt Niger",
         images: appConfig.logoUrl
           ? [
               {
                 url: `${process.env.NEXT_PUBLIC_APP_URL}${appConfig.logoUrl}`,
                 width: 1200,
                 height: 630,
-                alt: "Sahel Coders Logo",
+                alt: "Youth Connekt Niger Logo",
               },
             ]
           : [],
       },
       twitter: {
         card: "summary_large_image",
-        title: appConfig.websiteTitle || "Sahel Coders",
+        title: appConfig.websiteTitle || "Youth Connekt Niger",
         description:
           appConfig.websiteDescription ||
-          "Plateforme de développement et d'apprentissage",
+          "Plateforme officielle de Youth Connekt Niger. Connecter les jeunes nigériens aux opportunités d'emploi, d'entrepreneuriat et d'engagement citoyen.",
         images: appConfig.logoUrl
           ? [`${process.env.NEXT_PUBLIC_APP_URL}${appConfig.logoUrl}`]
           : [],
-        creator: "@sahelcoders",
+        creator: "@youthconnektniger",
       },
       robots: {
         index: true,
@@ -88,8 +94,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
     // Retourner des métadonnées par défaut en cas d'erreur
     return {
-      title: "Sahel Coders",
-      description: "Plateforme de développement et d'apprentissage",
+      title: "Youth Connekt Niger",
+      description: "Plateforme officielle de Youth Connekt Niger. Connecter les jeunes nigériens aux opportunités d'emploi, d'entrepreneuriat et d'engagement citoyen.",
     };
   }
 }

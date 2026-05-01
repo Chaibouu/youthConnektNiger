@@ -1,10 +1,10 @@
 const appConfig = {
-  appName: "Sahel Coders Starter",
-  websiteTitle: "Website Starter",
+  appName: "Youth Connekt Niger",
+  websiteTitle: "Youth Connekt Niger | Connecter la Jeunesse au Futur",
   websiteDescription:
-    "Sahel Coders simple authentication service and admin panel",
-  logoUrl: "/logo.jpg",
-  sidebarClearlogoUrl: "/sahel_coders_logo.png",
+    "Plateforme officielle de Youth Connekt Niger. Connecter les jeunes nigériens aux opportunités d'emploi, d'entrepreneuriat et d'engagement citoyen.",
+  logoUrl: "/YouthConnektNiger.jpeg",
+  sidebarClearlogoUrl: "/YouthConnektNiger.jpeg",
   adminSidebarColor: "#1C2434",
   mailOptions: {
     host: process.env.MAIL_HOST,
@@ -17,7 +17,17 @@ const appConfig = {
   },
   publicRoutes: ["/"],
   defaultLoginRedirect: "/test",
-  primaryColor: "#148D21",
+  primaryColor: "#035740", 
+  pprimaryColor: "#146934", 
+  secondaryColor: "#E26E12", 
+  primaryDarkColor: "#024a36",
+  secondaryDarkColor: "#d45a08",
+  primaryLightColor: "#57b58f",
+  secondaryLightColor: "#f7bc7a",
+  primaryTransparentColor: "#03574020",
+  secondaryTransparentColor: "#E26E1220",
+  primaryLightTransparentColor: "#03574010",
+  secondaryLightTransparentColor: "#E26E1210",
 
   // Ajout d'une option pour autoriser ou non les connexions multiples
   allowMultipleSessions: false, // ou false pour invalider les anciennes sessions
