@@ -15,7 +15,17 @@ const appConfig = {
       pass: process.env.MAIL_AUTH_PASSWORD,
     },
   },
-  publicRoutes: ["/"],
+  publicRoutes: [
+    "/",
+    // API publique — inscription événement (sans Bearer)
+    "/api/events/ycs-sahel3/register",
+    // YouthConnekt Sahel 3 — inscription & billet (public)
+    "/events/ycs-sahel3/inscription",
+    "/events/ycs-sahel3/billet",
+    "/events/ycs-sahel3/youthconnekt_sahel3_ticket.html",
+    "/events/ycs-sahel3/ticket_ycs3.html",
+    "/api/events/ycs-sahel3/billet-data",
+  ],
   defaultLoginRedirect: "/test",
   primaryColor: "#035740", 
   pprimaryColor: "#146934", 

@@ -23,7 +23,6 @@ export interface MenuItem {
   children?: MenuChildItem[];
 }
 
-
 export const adminNavigation: NavigationItem[] = [
   {
     title: "Dashboard",
@@ -32,43 +31,67 @@ export const adminNavigation: NavigationItem[] = [
     allowedRoles: ["USER","ADMIN"],
   },
   {
-    title: "Blogs",
+    title: "Utilisateurs",
     icon: "material-symbols:home-work",
-    path: "/blogs",
-    allowedRoles: ["USER","ADMIN"],
+    path: "/dashboard/users",
+    allowedRoles: ["USER"],
   },
   {
-    title: "Test",
+    title: "Profile",
     icon: "material-symbols:dashboard",
-    path: "/test",
+    path: "/dashboard/profile",
     allowedRoles: ["ADMIN", "USER"],
+  },
+  {
+    title: "Projets",
+    icon: "material-symbols:dashboard",
+    path: "/dashboard/projects",
+    allowedRoles: ["ADMIN"],
   },
   {
     title: "Paramètres",
     icon: "material-symbols:settings",
-    path: "/dashboard/settings",
+    path: "/settings",
     allowedRoles: ["USER","ADMIN"],
   },
-  {
-    title: "Pages",
-    icon: "eos-icons:admin",
-    path: "#",
-    children: [
-      {
-        title: "Client",
-        path: "/dashboard/client",
-        allowedRoles: ["USER","ADMIN"],
-      },
-      {
-        title: "Server",
-        path: "/dashboard/server",
-        allowedRoles: ["USER","ADMIN"],
-      },
-    ],
-    allowedRoles: ["USER","ADMIN"],
-  },
+  // {
+  //   title: "Pages",
+  //   icon: "eos-icons:admin",
+  //   path: "#",
+  //   children: [
+  //     {
+  //       title: "Client",
+  //       path: "/dashboard/client",
+  //       allowedRoles: ["USER","ADMIN"],
+  //     },
+  //     {
+  //       title: "Server",
+  //       path: "/dashboard/server",
+  //       allowedRoles: ["USER","ADMIN"],
+  //     },
+  //   ],
+  //   allowedRoles: ["USER","ADMIN"],
+  // },
 ];
 
+/** Entrées visibles pour un rôle donné (parents avec sous-menus : enfants filtrés). */
+export function filterAdminNavigationByRole(role: string): NavigationItem[] {
+  return adminNavigation
+    .map((item) => {
+      if (!item.allowedRoles.includes(role)) return null;
+
+      if (item.children?.length) {
+        const children = item.children.filter((c) =>
+          c.allowedRoles.includes(role)
+        );
+        if (children.length === 0) return null;
+        return { ...item, children };
+      }
+
+      return item;
+    })
+    .filter((item): item is NavigationItem => item !== null);
+}
 
 export const menuItems: MenuItem[] = [
   { href: "/", label: "Accueil" },

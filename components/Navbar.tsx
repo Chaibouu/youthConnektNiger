@@ -4,20 +4,39 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, LayoutDashboard, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 import { menuItems } from "@/settings/navigation";
 import appConfig from "@/settings";
 import { cn } from "@/lib/utils";
+import { useSession } from "@/context/SessionContext";
+import { logout } from "@/actions/logout";
+
+function userInitials(name: string | null | undefined): string {
+  const n = name?.trim();
+  if (!n) return "?";
+  const parts = n.split(/\s+/);
+  if (parts.length >= 2) {
+    return `${parts[0][0] ?? ""}${parts[parts.length - 1][0] ?? ""}`.toUpperCase();
+  }
+  return n.slice(0, 2).toUpperCase();
+}
 
 export function Navbar() {
   const pathname = usePathname();
+  const { user } = useSession();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -93,14 +112,73 @@ export function Navbar() {
           )}
         </ul>
 
-        {/* Boutons à droite - Desktop */}
+        {/* Auth / compte — Desktop */}
         <div className="hidden items-center gap-2 md:flex">
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/auth/login">Se connecter</Link>
-          </Button>
-          <Button size="sm" asChild className="bg-primary hover:bg-primary/90">
-            <Link href="/auth/signup">S&apos;inscrire</Link>
-          </Button>
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="rounded-full ring-offset-background transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  aria-label="Menu du compte"
+                >
+                  <Avatar className="h-9 w-9 border-2 border-primary/25 shadow-sm">
+                    <AvatarImage src={user.image ?? ""} alt="" />
+                    <AvatarFallback className="bg-primary text-sm font-semibold text-primary-foreground">
+                      {userInitials(user.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-52">
+                <div className="px-2 py-1.5">
+                  <p className="truncate text-sm font-medium">{user.name}</p>
+                  {user.email ? (
+                    <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+                  ) : null}
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link
+                    href="/dashboard"
+                    className="flex cursor-pointer items-center"
+                  >
+                    <LayoutDashboard className="mr-2 h-4 w-4 shrink-0" />
+                    Tableau de bord
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link
+                    href="/dashboard/profile"
+                    className="flex cursor-pointer items-center"
+                  >
+                    <User className="mr-2 h-4 w-4 shrink-0" />
+                    Profil
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="flex cursor-pointer items-center text-destructive focus:text-destructive"
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    void logout();
+                  }}
+                >
+                  <LogOut className="mr-2 h-4 w-4 shrink-0" />
+                  Se déconnecter
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <>
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/auth/login">Se connecter</Link>
+              </Button>
+              <Button size="sm" asChild className="bg-primary hover:bg-primary/90">
+                <Link href="/auth/signup">S&apos;inscrire</Link>
+              </Button>
+            </>
+          )}
         </div>
 
         {/* Mobile menu button */}
@@ -154,17 +232,66 @@ export function Navbar() {
                 </li>
               )
             )}
-            <li className="mt-4 flex flex-col gap-2 border-t pt-4">
-              <Button variant="outline" className="w-full" asChild>
-                <Link href="/auth/login" onClick={() => setMobileOpen(false)}>
-                  Se connecter
-                </Link>
-              </Button>
-              <Button className="w-full bg-primary hover:bg-primary/90" asChild>
-                <Link href="/auth/signup" onClick={() => setMobileOpen(false)}>
-                  S&apos;inscrire
-                </Link>
-              </Button>
+            <li className="mt-4 flex flex-col gap-3 border-t pt-4">
+              {user ? (
+                <>
+                  <div className="flex items-center gap-3 px-3 py-2">
+                    <Avatar className="h-11 w-11 border-2 border-primary/25">
+                      <AvatarImage src={user.image ?? ""} alt="" />
+                      <AvatarFallback className="bg-primary text-primary-foreground">
+                        {userInitials(user.name)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold">{user.name}</p>
+                      {user.email ? (
+                        <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+                      ) : null}
+                    </div>
+                  </div>
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-medium hover:bg-primary/10 hover:text-primary"
+                  >
+                    <LayoutDashboard className="h-4 w-4 shrink-0" />
+                    Tableau de bord
+                  </Link>
+                  <Link
+                    href="/dashboard/profile"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-medium hover:bg-primary/10 hover:text-primary"
+                  >
+                    <User className="h-4 w-4 shrink-0" />
+                    Profil
+                  </Link>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full justify-start gap-2 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    onClick={() => {
+                      setMobileOpen(false);
+                      void logout();
+                    }}
+                  >
+                    <LogOut className="h-4 w-4 shrink-0" />
+                    Se déconnecter
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="outline" className="w-full" asChild>
+                    <Link href="/auth/login" onClick={() => setMobileOpen(false)}>
+                      Se connecter
+                    </Link>
+                  </Button>
+                  <Button className="w-full bg-primary hover:bg-primary/90" asChild>
+                    <Link href="/auth/signup" onClick={() => setMobileOpen(false)}>
+                      S&apos;inscrire
+                    </Link>
+                  </Button>
+                </>
+              )}
             </li>
           </ul>
         </div>

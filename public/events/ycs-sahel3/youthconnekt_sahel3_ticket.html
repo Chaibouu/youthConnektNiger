@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Billet – YouthConnekt Sahel 3ème Édition</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --green-deep:  #063d28;
+      --green-mid:   #0a5c3a;
+      --green-light: #1a7a4a;
+      --gold-dark:   #c9922a;
+      --gold:        #f0c060;
+      --gold-light:  #f7d98a;
+      --orange:      #d94f1e;
+      --orange-2:    #e8701a;
+      --white:       #ffffff;
+      --mint:        #a8d8b0;
+      --mint-dk:     #7ab890;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: clip;
+      overflow-y: auto;
+      background: transparent;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: clip;
+      background: transparent;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      /* Conteneur des requêtes : largeur = fenêtre de l’iframe / viewport (pas le billet lui‑même → évite le bug cqi circulaire) */
+      container-type: inline-size;
+      container-name: ticket;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: max(12px, env(safe-area-inset-top, 0px))
+        max(12px, env(safe-area-inset-right, 0px))
+        max(12px, env(safe-area-inset-bottom, 0px))
+        max(12px, env(safe-area-inset-left, 0px));
+      gap: clamp(10px, 3vw, 16px);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      min-height: 100dvh;
+    }
+
+    /* ─── Page header ─── */
+    .page-header {
+      text-align: center;
+    }
+    .page-header h1 {
+      font-size: 11px;
+      letter-spacing: 5px;
+      color: var(--gold);
+      text-transform: uppercase;
+      opacity: 0.7;
+      font-weight: 400;
+    }
+
+    /* ═══════════════════════════════════
+       TICKET SHELL  (760 × 300 → scaled)
+       Ratio exact du SVG : 680 × 420 px
+       On utilise un SVG inline pour les
+       motifs, et des divs CSS par-dessus.
+    ═══════════════════════════════════ */
+    .ticket-wrap {
+      position: relative;
+      box-sizing: border-box;
+      width: 100%;
+      max-width: min(760px, 100%);
+      min-width: 0;
+      align-self: stretch;
+      margin-inline: auto;
+      /* hauteur proportionnelle 420/680 — forme fixe */
+      aspect-ratio: 680 / 420;
+      /* Échelle liée au body (container queries), pas au billet lui‑même */
+      font-size: clamp(5px, 2.35vw, 14px);
+      font-size: clamp(5px, 2.85cqi, 14px);
+      filter: drop-shadow(0 10px 28px rgba(0,0,0,.22));
+    }
+
+    /* ── SVG background (occupe tout le ticket) ── */
+    .ticket-svg-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    /* ── Overlay HTML positionné en % ── */
+    /* Cadre du ticket SVG : x=30 y=20 w=620 h=380  sur viewBox 680×420
+       → left = 30/680 = 4.41%   top = 20/420 = 4.76%
+         width= 620/680 = 91.18% height=380/420 = 90.48%              */
+    .ticket-frame {
+      position: absolute;
+      left:   4.41%;
+      top:    4.76%;
+      width:  91.18%;
+      height: 90.48%;
+      border-radius: 2.35%; /* 16px / 680px */
+      overflow: hidden;
+    }
+
+    /* Fond dégradé vert */
+    .ticket-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--green-mid), var(--green-deep));
+      border-radius: inherit;
+    }
+
+    /* Motifs triangles + grille via SVG pattern en bg */
+    .ticket-frame::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpolygon points='10,2 18,18 2,18' fill='none' stroke='%23ffffff' stroke-width='0.4' opacity='0.18'/%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Crect width='30' height='30' fill='none' stroke='%23ffffff' stroke-width='0.3' opacity='0.10'/%3E%3Cline x1='0' y1='15' x2='30' y2='15' stroke='%23ffffff' stroke-width='0.2' opacity='0.08'/%3E%3Cline x1='15' y1='0' x2='15' y2='30' stroke='%23ffffff' stroke-width='0.2' opacity='0.08'/%3E%3C/svg%3E");
+      border-radius: inherit;
+    }
+
+    /* ── Bandes losanges haut & bas ── */
+    .band {
+      position: absolute;
+      left: 0; right: 0;
+      height: 9.47%; /* 36/380 */
+      z-index: 4;
+      overflow: hidden;
+    }
+    .band.top    { top: 0; }
+    .band.bottom { bottom: 0; }
+
+    .band-gold {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-dark));
+    }
+    /* trait plus foncé sous la bande haut / au-dessus bande bas */
+    .band.top    .band-gold { border-bottom: max(2px, 0.22em) solid var(--gold-dark); }
+    .band.bottom .band-gold { border-top: max(2px, 0.22em) solid var(--gold-dark); }
+
+    /* losanges défilants */
+    .diamonds-row {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+    .diamonds-inner {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .dm {
+      width: 1.85em;
+      height: 1.85em;
+      background: var(--green-deep);
+      transform: rotate(45deg) scale(.6);
+      flex-shrink: 0;
+      opacity: .75;
+    }
+
+    /* ── Pilier gauche ── */
+    .pillar {
+      position: absolute;
+      left: 0;
+      top: 9.47%;      /* commence après bande haut */
+      bottom: 9.47%;   /* s'arrête avant bande bas  */
+      width: 4.84%;    /* 18/372 ≈ 4.8% de la frame */
+      background: var(--green-light);
+      opacity: .7;
+      z-index: 4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+      padding: 0.35em 0;
+    }
+    .pg {
+      width: 40%; aspect-ratio: 1;
+      transform: rotate(45deg);
+      flex-shrink: 0;
+    }
+    .pg.g { background: var(--gold);   }
+    .pg.o { background: var(--orange); }
+
+    /* ── Séparateur souche ── */
+    /* Souche = x=494 → (494-30)/620 = 74.84% de la frame */
+    .separator {
+      position: absolute;
+      top: 0; bottom: 0;
+      left: 74.84%;
+      border-left: max(1px, 0.11em) dashed rgba(240,192,96,.6);
+      z-index: 6;
+    }
+    /* encoches (demi-cercles) */
+    .notch {
+      position: absolute;
+      width: 3.5%;
+      aspect-ratio: 1;
+      background: transparent;
+      border-radius: 50%;
+      left: 74.84%;
+      transform: translateX(-50%);
+      z-index: 8;
+    }
+    .notch.top-n    { top: -1.8%;  }
+    .notch.bottom-n { bottom: -1.8%; }
+
+    /* ══════════════════════════════
+       CONTENU PRINCIPAL
+    ══════════════════════════════ */
+    /* Zone = x:48→494, y:58→370  dans frame 620×380
+       left=(48-0)/620=7.7%  top=(38)/380=10%
+       right=(620-494)/620=20.3%  bottom=(10)/380=2.6% */
+    .main-content {
+      position: absolute;
+      left: 7.7%;
+      top: 10%;
+      right: 20.3%;
+      bottom: 2.6%;
+      z-index: 7;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding: 2% 3% 1% 1%;
+      gap: 0;
+      min-height: 0;
+    }
+
+    /* Logo + titre */
+    .header-row {
+      display: flex;
+      align-items: center;
+      gap: 4%;
+      margin-bottom: 2%;
+    }
+
+    .logo-circle {
+      flex-shrink: 0;
+      width: clamp(52px, 12%, 72px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: max(1.5px, 0.14em) solid var(--gold);
+      background: rgba(26,122,74,.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .logo-star-svg {
+      position: absolute;
+      inset: 8%;
+    }
+    .logo-letters {
+      position: relative;
+      font-size: clamp(9px, 1.6vw, 13px);
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 1px;
+      font-family: Georgia, serif;
+    }
+
+    .titles {
+      flex: 1;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+    .lbl-edition {
+      font-size: clamp(7px, 1vw, 10px);
+      letter-spacing: 3px;
+      color: var(--gold);
+      opacity: .88;
+      text-transform: uppercase;
+      margin-bottom: 1px;
+    }
+    .t-youthconnekt {
+      font-size: clamp(14px, 3vw, 22px);
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: 1px;
+      line-height: 1;
+      font-family: Georgia, serif;
+    }
+    .t-sahel {
+      font-size: clamp(14px, 3vw, 22px);
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 2px;
+      line-height: 1;
+      font-family: Georgia, serif;
+    }
+    .t-sub {
+      font-size: clamp(7px, 1vw, 11px);
+      color: var(--mint);
+      letter-spacing: 1px;
+      margin-top: 2px;
+      line-height: 1.35;
+    }
+
+    /* Diviseur doré avec triangles */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      margin: 3% 0 2%;
+    }
+    .div-line {
+      flex: 1;
+      height: 1.5px;
+      background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-dark));
+      opacity: .8;
+    }
+    .tri {
+      width: 0; height: 0;
+      border-left: 0.36em solid transparent;
+      border-right: 0.36em solid transparent;
+    }
+    .tri.g { border-bottom: 0.5em solid var(--gold);   }
+    .tri.o { border-bottom: 0.5em solid var(--orange); }
+
+    /* Infos participant */
+    .lbl {
+      font-size: clamp(6px,.9vw, 9px);
+      letter-spacing: 2px;
+      color: var(--mint);
+      text-transform: uppercase;
+      margin-bottom: 1px;
+    }
+    .p-name {
+      font-size: clamp(13px, 2.6vw, 20px);
+      font-weight: 700;
+      color: var(--white);
+      font-family: Georgia, serif;
+      line-height: 1.1;
+    }
+    .p-org {
+      font-size: clamp(9px, 1.4vw, 13px);
+      color: var(--gold);
+      margin-top: 1px;
+    }
+
+    /* Ligne fine */
+    .thin { height: 1px; background: rgba(26,122,74,.55); margin: 2% 0 1%; }
+
+    /* Blocs date + lieu */
+    .detail-row {
+      display: flex;
+      gap: 2%;
+      margin-top: 0;
+    }
+    .d-block {
+      padding: 3% 4%;
+      border-radius: 5px;
+      border-left: 3px solid;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+    .d-block.date-b  {
+      background: rgba(217,79,30,.13);
+      border-color: var(--orange);
+      flex: 0 0 auto;
+      min-width: 28%;
+    }
+    .d-block.venue-b {
+      background: rgba(26,122,74,.18);
+      border-color: var(--gold);
+      flex: 1;
+    }
+    .d-lbl {
+      font-size: clamp(5.5px,.8vw, 8px);
+      letter-spacing: 2px;
+      color: var(--mint);
+      text-transform: uppercase;
+    }
+    .d-dates {
+      font-size: clamp(12px,2vw,16px);
+      font-weight: 700;
+      color: var(--white);
+      font-family: Georgia, serif;
+      line-height: 1;
+    }
+    .d-year {
+      font-size: clamp(8px,1.2vw,11px);
+      color: var(--gold);
+    }
+    .d-venue {
+      font-size: clamp(7px,1vw,10px);
+      font-weight: 600;
+      color: var(--white);
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+    .d-city {
+      font-size: clamp(6.5px,.9vw, 9px);
+      color: var(--mint);
+      margin-top: 1px;
+    }
+
+    /* Référence — poussée en bas de la zone pour équilibrer la carte */
+    .ref {
+      font-family: 'Source Code Pro', monospace;
+      font-size: clamp(6px,.85vw, 8.5px);
+      color: var(--mint-dk);
+      letter-spacing: 1px;
+      margin-top: auto;
+      padding-top: 1.5%;
+      flex-shrink: 0;
+      line-height: 1.25;
+    }
+
+    /* Motif cercles bas gauche (déco) */
+    .deco-circles {
+      position: absolute;
+      left: 1.5%;
+      bottom: 1%;
+      width: 8%;
+      aspect-ratio: 1;
+      z-index: 5;
+      opacity: .28;
+    }
+
+    /* ══════════════════════════════
+       SOUCHE DROITE
+    ══════════════════════════════ */
+    /* x=494 → (494-30)/620=74.84% de la frame, w=(650-494)/620=25.16% */
+    .stub {
+      position: absolute;
+      left: 74.84%;
+      top: 0; bottom: 0;
+      width: 25.16%;
+      z-index: 7;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      overflow: hidden;
+    }
+    /* Voile désactivé — évite le fond sombre sur la souche */
+    .stub::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: transparent;
+    }
+    /* Points dorés */
+    .stub::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14'%3E%3Ccircle cx='7' cy='7' r='1.2' fill='%23f0c060' opacity='0.22'/%3E%3C/svg%3E");
+    }
+
+    /* Badge orange en haut de la souche
+       y=26 → (26-20)/380=1.6% top dans frame;
+       height=26 → 6.8%                        */
+    .stub-badge {
+      position: relative;
+      width: 100%;
+      flex-shrink: 0;
+      z-index: 2;
+      background: linear-gradient(90deg, var(--orange), var(--orange-2));
+      text-align: center;
+      padding: 5.5% 0;
+      font-size: clamp(7px,.9vw, 10px);
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* Corps souche : losanges contre la perforation (trait pointillé), texte à côté */
+    .stub-body {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+      min-height: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      justify-content: flex-start;
+      gap: 0;
+      padding: 2% 5% 6% 0;
+      box-sizing: border-box;
+    }
+
+    /* Losanges : même hauteur que la zone utile, alignés sur la ligne de séparation */
+    .stub-gems {
+      flex: 0 0 auto;
+      align-self: stretch;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+      gap: clamp(4px, 1.1vw, 9px);
+      padding: 0.35em 0.55em 0.35em 0.35em;
+      margin: 0;
+      border-left: none;
+      border-right: max(1px, 0.11em) dashed rgba(240, 192, 96, 0.65);
+    }
+
+    /* Titre vertical et bloc dates côte à côte — évite la superposition */
+    .stub-copy {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(8px, 2.5vw, 16px);
+      padding-left: 4%;
+      padding-right: 4%;
+      padding-top: 2%;
+      padding-bottom: 2%;
+      min-height: 0;
+      transform: translateY(-2px);
+    }
+
+    .sg {
+      width: clamp(9px, 2.2vw, 14px);
+      aspect-ratio: 1;
+      transform: rotate(45deg);
+      flex-shrink: 0;
+      opacity: 0.75;
+    }
+
+    .sg.g { background: var(--gold);   }
+    .sg.o { background: var(--orange); }
+
+    .stub-vtext-wrap {
+      flex: 0 0 auto;
+      width: auto;
+      max-width: 42%;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 4px;
+    }
+
+    .stub-vtext {
+      margin: 0;
+      transform: rotate(-90deg);
+      transform-origin: center center;
+      white-space: nowrap;
+      font-family: Georgia, serif;
+      font-size: clamp(7px, 1vw, 11px);
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 2px;
+      pointer-events: none;
+      line-height: 1;
+      text-align: center;
+    }
+
+    .stub-footer {
+      flex: 1;
+      min-width: 0;
+      margin-top: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      text-align: center;
+    }
+
+    .stub-dates {
+      margin: 0;
+      width: 100%;
+      font-family: Georgia, serif;
+      font-size: clamp(9px, 1.3vw, 13px);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.2;
+      text-align: center;
+    }
+
+    .stub-month {
+      margin: 0;
+      width: 100%;
+      font-size: clamp(8px, 1.1vw, 11px);
+      color: var(--gold);
+      line-height: 1.2;
+      text-align: center;
+    }
+
+    .stub-venue-s {
+      margin: 0;
+      width: 100%;
+      font-size: clamp(6px, 0.85vw, 9px);
+      color: var(--mint);
+      letter-spacing: 0.5px;
+      line-height: 1.2;
+      text-align: center;
+    }
+
+    /* ── Bordure extérieure or (via SVG overlay) ── */
+    .ticket-border-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* ══════════════════════════════
+       BOUTONS
+    ══════════════════════════════ */
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn {
+      padding: 10px 28px;
+      border-radius: 8px;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      cursor: pointer;
+      border: none;
+      transition: opacity .2s, transform .15s;
+    }
+    .btn:hover  { opacity: .85; transform: translateY(-1px); }
+    .btn:active { transform: scale(.97); }
+    .btn-gold { background: var(--gold); color: var(--green-deep); }
+    .btn-outline {
+      background: transparent;
+      color: var(--gold);
+      border: 1px solid var(--gold-dark);
+    }
+
+    /* Modale personnalisation */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.75);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #0e2218;
+      border: 1px solid var(--gold-dark);
+      border-radius: 12px;
+      padding: 32px;
+      width: min(440px, 90vw);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .modal h2 {
+      font-family: Georgia, serif;
+      font-size: 18px;
+      color: var(--gold);
+      font-weight: 700;
+    }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label {
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--mint);
+      text-transform: uppercase;
+    }
+    .field input {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(201,146,42,.4);
+      border-radius: 6px;
+      padding: 9px 12px;
+      color: var(--white);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 15px;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .field input:focus { border-color: var(--gold); }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+    /*
+      Mobile / billet étroit : tout passe à l’échelle (cqi = % largeur body / iframe)
+      pour garder la même hiérarchie visuelle que sur la maquette desktop.
+    */
+    @container ticket (max-width: 560px) {
+      .ticket-wrap {
+        font-size: clamp(3.6px, 2.35cqi, 10.5px);
+      }
+      .page-header h1 {
+        font-size: 9px;
+        letter-spacing: 3px;
+      }
+      .logo-circle {
+        width: clamp(30px, 10.5cqi, 52px);
+      }
+      .logo-letters {
+        font-size: clamp(6px, 1.05cqi, 11px);
+      }
+      .lbl-edition {
+        font-size: clamp(4.5px, 0.68cqi, 8px);
+        letter-spacing: 2px;
+      }
+      .t-youthconnekt,
+      .t-sahel {
+        font-size: clamp(9px, 1.85cqi, 17px);
+      }
+      .t-sub {
+        font-size: clamp(5px, 0.72cqi, 9px);
+      }
+      .lbl {
+        font-size: clamp(4.5px, 0.62cqi, 7.5px);
+      }
+      .p-name {
+        font-size: clamp(8px, 1.65cqi, 15px);
+      }
+      .p-org {
+        font-size: clamp(6px, 0.95cqi, 11px);
+      }
+      .d-lbl {
+        font-size: clamp(4px, 0.52cqi, 7px);
+      }
+      .d-dates {
+        font-size: clamp(8px, 1.45cqi, 13px);
+      }
+      .d-year {
+        font-size: clamp(6px, 0.85cqi, 9px);
+      }
+      .d-venue {
+        font-size: clamp(5.5px, 0.75cqi, 8.5px);
+      }
+      .d-city {
+        font-size: clamp(5px, 0.68cqi, 8px);
+      }
+      .ref {
+        font-size: clamp(4px, 0.58cqi, 7px);
+      }
+      .stub-badge {
+        font-size: clamp(5px, 0.68cqi, 9px);
+        letter-spacing: 1.5px;
+      }
+      .stub-gems {
+        gap: clamp(3px, 0.75cqi, 8px);
+      }
+      .stub-copy {
+        gap: clamp(4px, 1.7cqi, 14px);
+      }
+      .sg {
+        width: clamp(6px, 1.65cqi, 11px);
+      }
+      .stub-vtext {
+        font-size: clamp(5px, 0.72cqi, 9px);
+        letter-spacing: 1.5px;
+      }
+      .stub-dates {
+        font-size: clamp(7px, 0.95cqi, 11px);
+      }
+      .stub-month {
+        font-size: clamp(6px, 0.82cqi, 10px);
+      }
+      .stub-venue-s {
+        font-size: clamp(4.5px, 0.62cqi, 8px);
+      }
+      /* Motifs bandeaux : losanges plus petits */
+      .dm {
+        transform: rotate(45deg) scale(0.5);
+      }
+      /* Grille / triangles de fond plus fins */
+      .ticket-frame::after {
+        background-size: 13px 13px, 19px 19px;
+      }
+      .stub::after {
+        background-size: 9px 9px;
+      }
+      .deco-circles {
+        opacity: 0.22;
+      }
+      /* Espacements & lisibilité du bloc principal */
+      .main-content {
+        padding: 1.65% 2.85% 0.55% 1%;
+      }
+      .header-row {
+        align-items: flex-start;
+        gap: 3.5%;
+        margin-bottom: 1.6%;
+      }
+      .t-youthconnekt,
+      .t-sahel {
+        line-height: 1.07;
+      }
+      .divider {
+        margin: 2.3% 0 1.7%;
+      }
+      .thin {
+        margin: 1.7% 0 1.1%;
+      }
+      .lbl {
+        margin-bottom: 2px;
+      }
+      .p-name {
+        line-height: 1.12;
+      }
+      .detail-row {
+        gap: 1.8%;
+        align-items: flex-start;
+      }
+      .d-block {
+        padding: 2.4% 3.2%;
+      }
+      .d-block.date-b {
+        flex: 0 1 auto;
+        max-width: 44%;
+      }
+      .d-block.venue-b {
+        min-width: 0;
+      }
+      .stub-body {
+        padding: 1.8% 4.5% 5.5% 0;
+      }
+      .stub-vtext-wrap {
+        max-width: 36%;
+        min-width: 0;
+      }
+      .stub-copy {
+        transform: translateY(-1px);
+      }
+    }
+
+    @container ticket (max-width: 400px) {
+      .ticket-wrap {
+        font-size: clamp(3.25px, 2.15cqi, 9.5px);
+      }
+      .dm {
+        transform: rotate(45deg) scale(0.44);
+      }
+      .ticket-frame::after {
+        background-size: 11px 11px, 16px 16px;
+      }
+      .stub::after {
+        background-size: 8px 8px;
+      }
+      .main-content {
+        padding: 1.45% 2.6% 0.45% 0.85%;
+      }
+      .stub-vtext-wrap {
+        max-width: 34%;
+      }
+      .stub-footer {
+        gap: 1px;
+      }
+    }
+
+    /* Billets étroits : compacter sans changer la silhouette globale */
+    @container ticket (max-width: 380px) {
+      .main-content {
+        padding: 1.35% 2.35% 0.4% 0.65%;
+      }
+      .header-row {
+        gap: 3%;
+        margin-bottom: 1.4%;
+      }
+      .stub-copy {
+        gap: clamp(4px, 1.8cqi, 11px);
+        padding-left: 2.5%;
+        padding-right: 2.5%;
+      }
+      .stub-vtext {
+        letter-spacing: 1px;
+      }
+      .stub-badge {
+        padding: 5% 0;
+      }
+    }
+
+    /* Passage date / lieu en colonne seulement sur très petit écran pour garder la mise en page « comme la maquette » plus longtemps */
+    @container ticket (max-width: 260px) {
+      .detail-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+      }
+      .d-block.date-b {
+        min-width: unset;
+      }
+      .d-block {
+        padding: 2.5% 3%;
+      }
+      .lbl-edition {
+        letter-spacing: 2px;
+      }
+    }
+
+    /* Print */
+    @media print {
+      html { overflow: visible; }
+      body {
+        background: white;
+        padding: 0;
+        gap: 0;
+        min-height: 0;
+      }
+      .page-header, .actions { display: none; }
+      body {
+        container-type: normal;
+      }
+      .ticket-wrap {
+        filter: none;
+        width: 100%;
+        font-size: 12pt;
+        max-width: none;
+      }
+      .notch { background: white; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>YouthConnekt Sahel &middot; 3ème Édition &middot; Billet Officiel</h1>
+</div>
+
+<!-- ════════════ TICKET ════════════ -->
+<div class="ticket-wrap">
+
+  <!-- SVG de fond (motifs, patterns) -->
+  <svg class="ticket-svg-bg" viewBox="0 0 680 420" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%"   stop-color="#0a5c3a"/>
+        <stop offset="100%" stop-color="#063d28"/>
+      </linearGradient>
+    </defs>
+    <!-- fond vert dégradé avec coins arrondis -->
+    <rect x="30" y="20" width="620" height="380" rx="16" fill="url(#bgGrad)"/>
+  </svg>
+
+  <!-- Frame du ticket (motifs CSS + enfants) -->
+  <div class="ticket-frame">
+
+    <!-- Bande haut -->
+    <div class="band top">
+      <div class="band-gold"></div>
+      <div class="diamonds-row" aria-hidden="true">
+        <div class="diamonds-inner">
+          <!-- 60 losanges × 2 pour loop -->
+          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+          <!-- dupliqué -->
+          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bande bas -->
+    <div class="band bottom">
+      <div class="band-gold"></div>
+      <div class="diamonds-row" aria-hidden="true">
+        <div class="diamonds-inner">
+          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pilier gauche -->
+    <div class="pillar" aria-hidden="true">
+      <div class="pg g"></div><div class="pg o"></div>
+      <div class="pg g"></div><div class="pg o"></div>
+      <div class="pg g"></div><div class="pg o"></div>
+      <div class="pg g"></div>
+    </div>
+
+    <!-- Séparateur souche + encoches -->
+    <div class="separator" aria-hidden="true"></div>
+
+    <!-- ─── CONTENU PRINCIPAL ─── -->
+    <div class="main-content">
+
+      <!-- Logo + titres (calqués sur SVG : cx=108 cy=118) -->
+      <div class="header-row">
+        <div class="logo-circle">
+          <svg class="logo-star-svg" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="26" cy="26" r="25" fill="rgba(26,122,74,0.0)" stroke="#f0c060" stroke-width="1.5"/>
+            <polygon points="26,4 30,17 44,17 33,25 37,38 26,30 15,38 19,25 8,17 22,17"
+                     fill="#f0c060" opacity="0.9"/>
+          </svg>
+          <span class="logo-letters">YC</span>
+        </div>
+
+        <div class="titles">
+          <p class="lbl-edition">3ème Édition</p>
+          <p class="t-youthconnekt">YouthConnekt</p>
+          <p class="t-sahel">Sahel</p>
+          <p class="t-sub">Autonomisation des jeunes du Sahel &middot; Niger</p>
+        </div>
+      </div>
+
+      <!-- Diviseur doré -->
+      <div class="divider">
+        <div class="div-line"></div>
+        <div class="tri g"></div>
+        <div class="tri o"></div>
+        <div class="tri g"></div>
+        <div class="div-line"></div>
+      </div>
+
+      <!-- Participant -->
+      <p class="lbl">Participant</p>
+      <p class="p-name" id="p-name">Prénom NOM</p>
+      <p class="p-org"  id="p-org">Organisation &middot; Niger</p>
+
+      <div class="thin"></div>
+
+      <!-- Date + Lieu -->
+      <div class="detail-row">
+        <div class="d-block date-b">
+          <p class="d-lbl">Dates</p>
+          <p class="d-dates">10 &middot; 11 &middot; 12</p>
+          <p class="d-year">Août 2026</p>
+        </div>
+        <div class="d-block venue-b">
+          <p class="d-lbl">Lieu</p>
+          <p class="d-venue">Centre International de Conférences<br>Mahatma Gandhi (CICMG)</p>
+          <p class="d-city">Niamey, Niger</p>
+        </div>
+      </div>
+
+      <!-- Référence -->
+      <p class="ref" id="ref-txt">Réf. YCS3-000000 &middot; youthconnektsahel.ne</p>
+
+    </div><!-- /main-content -->
+
+    <!-- Déco cercles bas gauche -->
+    <div class="deco-circles" aria-hidden="true">
+      <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="30" cy="30" r="27" stroke="#f0c060" stroke-width="1.2"/>
+        <circle cx="30" cy="30" r="17" stroke="#f0c060" stroke-width="1"/>
+        <circle cx="30" cy="30" r="6"  fill="#f0c060"/>
+      </svg>
+    </div>
+
+    <!-- ─── SOUCHE ─── -->
+    <div class="stub">
+      <div class="stub-badge">Participant</div>
+
+      <div class="stub-body">
+        <div class="stub-gems" aria-hidden="true">
+          <div class="sg g"></div><div class="sg o"></div>
+          <div class="sg g"></div><div class="sg o"></div>
+          <div class="sg g"></div><div class="sg o"></div>
+          <div class="sg g"></div><div class="sg o"></div>
+          <div class="sg g"></div>
+        </div>
+
+        <div class="stub-copy">
+          <div class="stub-vtext-wrap">
+            <p class="stub-vtext">YouthConnekt Sahel &middot; Niger</p>
+          </div>
+          <div class="stub-footer">
+            <p class="stub-dates">10 &middot; 11 &middot; 12</p>
+            <p class="stub-month">Août 2026</p>
+            <p class="stub-venue-s">CICMG &middot; Niamey</p>
+          </div>
+        </div>
+      </div>
+    </div><!-- /stub -->
+
+  </div><!-- /ticket-frame -->
+
+  <!-- Encoches découpées -->
+  <div class="notch top-n"    aria-hidden="true"></div>
+  <div class="notch bottom-n" aria-hidden="true"></div>
+
+  <!-- Bordure extérieure dorée via SVG -->
+  <svg class="ticket-border-svg" viewBox="0 0 680 420" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <rect x="30" y="20" width="620" height="380" rx="16"
+          fill="none" stroke="#c9922a" stroke-width="2"/>
+  </svg>
+
+</div><!-- /ticket-wrap -->
+
+<!-- ── Boutons ── -->
+<div class="actions">
+  <button class="btn btn-gold"    onclick="openModal()">Personnaliser le billet</button>
+  <button class="btn btn-outline" onclick="window.print()">Imprimer / PDF</button>
+</div>
+
+<!-- ── Modale ── -->
+<div class="modal-overlay" id="modal" role="dialog" aria-modal="true" aria-label="Personnalisation du billet">
+  <div class="modal">
+    <h2>Personnaliser le billet</h2>
+    <div class="field">
+      <label for="inp-name">Nom complet</label>
+      <input id="inp-name" type="text" placeholder="Prénom NOM" value="Prénom NOM"/>
+    </div>
+    <div class="field">
+      <label for="inp-org">Organisation &amp; pays</label>
+      <input id="inp-org" type="text" placeholder="Organisation · Niger" value="Organisation · Niger"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Annuler</button>
+      <button class="btn btn-gold"    onclick="applyModal()">Appliquer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openModal() {
+    document.getElementById('inp-name').value = document.getElementById('p-name').textContent;
+    document.getElementById('inp-org').value  = document.getElementById('p-org').textContent;
+    document.getElementById('modal').classList.add('open');
+    document.getElementById('inp-name').focus();
+  }
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open');
+  }
+  function applyModal() {
+    const name = document.getElementById('inp-name').value.trim() || 'Prénom NOM';
+    const org  = document.getElementById('inp-org').value.trim()  || 'Organisation · Niger';
+    document.getElementById('p-name').textContent   = name;
+    document.getElementById('p-org').textContent    = org;
+    // Générer ref unique
+    const uid = Math.random().toString(36).substring(2,8).toUpperCase();
+    document.getElementById('ref-txt').textContent  = 'Réf. YCS3-' + uid + ' · youthconnektsahel.ne';
+    closeModal();
+  }
+  // Fermer modale en cliquant le fond
+  document.getElementById('modal').addEventListener('click', function(e){
+    if (e.target === this) closeModal();
+  });
+  // Échap
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') closeModal();
+  });
+</script>
+
+</body>
+</html>

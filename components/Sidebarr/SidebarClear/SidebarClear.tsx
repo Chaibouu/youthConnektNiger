@@ -1,12 +1,15 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { adminNavigation } from "@/settings/navigation";
+import {
+  filterAdminNavigationByRole,
+  type NavigationItem,
+} from "@/settings/navigation";
 import appConfig from "@/settings";
 import { Icon } from "@iconify/react";
 import { ChevronDown, Menu, X, PanelLeft, PanelLeftClose } from "lucide-react";
@@ -14,11 +17,20 @@ import { ChevronDown, Menu, X, PanelLeft, PanelLeftClose } from "lucide-react";
 const OPEN_WIDTH = 272;
 const CLOSED_WIDTH = 72;
 
-export function SidebarClear() {
+type SidebarClearProps = {
+  userRole: string;
+};
+
+export function SidebarClear({ userRole }: SidebarClearProps) {
   const [hoverOpen, setHoverOpen] = useState(false);
   const [pinned, setPinned] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
+
+  const navigationItems = useMemo(
+    () => filterAdminNavigationByRole(userRole),
+    [userRole]
+  );
 
   // Restaurer l'état pinned depuis localStorage
   useEffect(() => {
@@ -81,6 +93,7 @@ export function SidebarClear() {
           pinned={pinned}
           onTogglePin={togglePin}
           pathname={pathname}
+          navigationItems={navigationItems}
         />
       </motion.aside>
 
@@ -100,6 +113,7 @@ export function SidebarClear() {
               pinned={false}
               onTogglePin={() => {}}
               pathname={pathname}
+              navigationItems={navigationItems}
               isMobile
               onNavigate={() => setMobileOpen(false)}
             />
@@ -117,6 +131,7 @@ interface SidebarContentProps {
   pinned: boolean;
   onTogglePin: () => void;
   pathname: string;
+  navigationItems: NavigationItem[];
   isMobile?: boolean;
   onNavigate?: () => void;
 }
@@ -126,6 +141,7 @@ function SidebarContent({
   pinned,
   onTogglePin,
   pathname,
+  navigationItems,
   isMobile,
   onNavigate,
 }: SidebarContentProps) {
@@ -164,7 +180,7 @@ function SidebarContent({
       {/* Navigation */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden py-3 px-2 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
         <nav className="space-y-0.5">
-          {adminNavigation.map((item, idx) => (
+          {navigationItems.map((item, idx) => (
             <NavItem
               key={idx}
               item={item}
@@ -265,7 +281,7 @@ function Logo({ open }: { open: boolean }) {
 /* ─── NavItem ────────────────────────────────────────────────────── */
 
 interface NavItemProps {
-  item: any;
+  item: NavigationItem;
   pathname: string;
   open: boolean;
   onNavigate?: () => void;
@@ -273,17 +289,19 @@ interface NavItemProps {
 
 function NavItem({ item, pathname, open, onNavigate }: NavItemProps) {
   const hasChildren = item.children && item.children.length > 0;
+  // Correspondance exacte uniquement pour les entrées plates : évite que /dashboard/users
+  // active aussi « Dashboard » (/dashboard) via startsWith.
   const isActive =
     pathname === item.path ||
-    (hasChildren && item.children?.some((c: any) => pathname === c.path)) ||
-    (item.path !== "/" && pathname.startsWith(item.path));
+    (hasChildren &&
+      item.children?.some((c) => pathname === c.path));
 
-  const [expanded, setExpanded] = useState(isActive);
+  const [expanded, setExpanded] = useState<boolean>(!!isActive);
 
   const handleClick = (e: React.MouseEvent) => {
     if (hasChildren) {
       e.preventDefault();
-      setExpanded((prev : boolean) => !prev);
+      setExpanded((prev) => !(prev ?? false));
     } else if (onNavigate) {
       onNavigate();
     }
@@ -291,20 +309,26 @@ function NavItem({ item, pathname, open, onNavigate }: NavItemProps) {
 
   const btnClass = cn(
     "w-full flex items-center gap-3 px-2 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group",
-    isActive ? "text-white" : "text-white/70 hover:text-white hover:bg-white/10"
+    isActive
+      ? "text-white"
+      : "text-white/70 hover:text-white hover:bg-white/10"
   );
 
-  const activeStyle = isActive ? { backgroundColor: "rgba(255,255,255,0.18)" } : {};
+  const activeStyle = isActive
+    ? { backgroundColor: "rgba(255,255,255,0.22)" }
+    : {};
 
-  /* Icône commune */
+  /* Icône commune — actif : fond et glyphe bien blancs pour contraster avec la barre secondaire */
   const iconEl = (
     <div
       className={cn(
         "flex-shrink-0 h-8 w-8 rounded-lg flex items-center justify-center transition-all duration-200",
-        isActive ? "bg-white/20" : "bg-white/10 group-hover:bg-white/15"
+        isActive
+          ? "bg-white/35 text-white"
+          : "bg-white/10 text-white/90 group-hover:bg-white/15"
       )}
     >
-      <Icon icon={item.icon} className="h-4 w-4" />
+      <Icon icon={item.icon} className="h-4 w-4 text-inherit" />
     </div>
   );
 
@@ -333,7 +357,11 @@ function NavItem({ item, pathname, open, onNavigate }: NavItemProps) {
         <div className="relative">
           {/* Indicateur de page active — flush avec le bord gauche du nav container */}
           {isActive && (
-            <span className="absolute -left-2 top-1/2 -translate-y-1/2 w-[3px] h-8 rounded-r-full bg-white" />
+            <span
+              className="absolute -left-2 top-1/2 -translate-y-1/2 h-8 w-[3px] rounded-r-full shadow-[0_0_8px_rgba(0,0,0,.15)]"
+              style={{ backgroundColor: appConfig.secondaryColor }}
+              aria-hidden
+            />
           )}
           <button
             onClick={handleClick}
@@ -346,7 +374,10 @@ function NavItem({ item, pathname, open, onNavigate }: NavItemProps) {
               <motion.div
                 animate={{ rotate: expanded ? 180 : 0 }}
                 transition={{ duration: 0.25 }}
-                className="flex-shrink-0 text-white/50"
+                className={cn(
+                  "flex-shrink-0 transition-colors",
+                  isActive ? "text-white" : "text-white/50"
+                )}
               >
                 <ChevronDown className="h-3.5 w-3.5" />
               </motion.div>
@@ -368,7 +399,7 @@ function NavItem({ item, pathname, open, onNavigate }: NavItemProps) {
                 className="ml-5 mt-0.5 mb-1 space-y-0.5 pl-3"
                 style={{ borderLeft: "1px solid rgba(255,255,255,0.2)" }}
               >
-                {item.children.map((child: any, idx: number) => {
+                {item.children!.map((child, idx: number) => {
                   const isChildActive = pathname === child.path;
                   return (
                     <motion.div
@@ -381,12 +412,19 @@ function NavItem({ item, pathname, open, onNavigate }: NavItemProps) {
                         href={child.path}
                         onClick={onNavigate}
                         className={cn(
-                          "block px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200",
+                          "block px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200 border-l-[3px]",
                           isChildActive
-                            ? "text-white font-semibold"
-                            : "text-white/60 hover:text-white hover:bg-white/10"
+                            ? "border-transparent font-semibold text-white"
+                            : "border-transparent text-white/60 hover:text-white hover:bg-white/10"
                         )}
-                        style={isChildActive ? { backgroundColor: "rgba(255,255,255,0.15)" } : {}}
+                        style={
+                          isChildActive
+                            ? {
+                                backgroundColor: "rgba(255,255,255,0.18)",
+                                borderLeftColor: appConfig.secondaryColor,
+                              }
+                            : {}
+                        }
                       >
                         {child.title}
                       </Link>
@@ -405,7 +443,11 @@ function NavItem({ item, pathname, open, onNavigate }: NavItemProps) {
     /* Wrapper relatif : l'indicateur est positionné ici, pas dans le Link */
     <div className="relative">
       {isActive && (
-        <span className="absolute -left-2 top-1/2 -translate-y-1/2 w-[3px] h-8 rounded-r-full bg-white" />
+        <span
+          className="absolute -left-2 top-1/2 -translate-y-1/2 h-8 w-[3px] rounded-r-full shadow-[0_0_8px_rgba(0,0,0,.15)]"
+          style={{ backgroundColor: appConfig.secondaryColor }}
+          aria-hidden
+        />
       )}
       <Link
         href={item.path}

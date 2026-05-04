@@ -12,6 +12,244 @@ enum UserRole {
     USER
 }
 
+enum Gender {
+    Masculin
+    Feminin
+}
+
+enum ProfessionalStatus {
+    ETUDIANT
+    ENTREPRENEUR
+    SALARIE
+    SANS_EMPLOI
+    FONCTIONNAIRE
+    AUTRE
+}
+
+enum Niveau {
+  COLLEGE_6EME
+  COLLEGE_5EME
+  COLLEGE_4EME
+  COLLEGE_3EME
+
+  LYCEE_SECONDE
+  LYCEE_PREMIERE
+  LYCEE_TERMINALE
+
+  LICENCE_1
+  LICENCE_2
+  LICENCE_3
+
+  MASTER_1
+  MASTER_2
+
+  DOCTORAT
+
+  AUTRE
+}
+
+enum Domaine {
+  INFORMATIQUE
+  RESEAUX_TELECOMS
+  GENIE_LOGICIEL
+  CYBERSECURITE
+  INTELLIGENCE_ARTIFICIELLE
+  MAINTENANCE_INFORMATIQUE
+  SYSTEMES_RESEAUX
+  GENIE_CIVIL
+  GENIE_ELECTRIQUE
+  GENIE_ELECTROMECANIQUE
+  GENIE_INDUSTRIEL
+  GENIE_RURAL
+  ENERGIE_RENOUVELABLE
+  PETROCHIMIE
+  ELECTRONIQUE
+  TELECOMMUNICATIONS
+  COMMUNICATIONS_ELECTRONIQUES
+  SERVICES_POSTAUX
+  MATHEMATIQUES
+  PHYSIQUE
+  CHIMIE
+  SCIENCES_DE_LA_VIE
+  SCIENCES_DE_LA_TERRE
+  AGRONOMIE
+  AGRICULTURE
+  ELEVAGE
+  AGROALIMENTAIRE
+  TRANSFORMATION_AGROALIMENTAIRE
+  HYDRAULIQUE
+  EAUX_FORETS
+  ENVIRONNEMENT
+  MEDECINE_GENERALE
+  MEDECINE_SPECIALISEE
+  PHARMACIE
+  ODONTOLOGIE
+  SAGE_FEMME
+  SOINS_INFIRMIERS
+  IDE
+  LABORATOIRE_MEDICAL
+  DELEGUE_MEDICAL
+  NURSING
+  SANTE_PUBLIQUE
+  HYGIENE_ASSAINISSEMENT
+  ECONOMIE
+  ECONOMIE_NUMERIQUE
+  GESTION
+  GESTION_COMMERCE
+  SCIENCE_GESTION
+  ADMINISTRATION_ENTREPRISES
+  COMPTABILITE
+  FINANCE_BANQUE
+  ASSURANCE
+  MARKETING
+  MARKETING_DIGITAL
+  MANAGEMENT
+  GESTION_RESSOURCES_HUMAINES
+  TECHNICO_COMMERCIAL
+  COMMERCE_INTERNATIONAL
+  AGENT_COMMERCIAL
+  TRANSPORT_LOGISTIQUE
+  TRANSIT_DOUANE
+  DROIT_PUBLIC
+  DROIT_PRIVE
+  DROIT_DES_AFFAIRES
+  CARRIERES_JUDICIAIRES
+  LETTRES_MODERNES
+  LETTRES_ANGLAIS
+  LANGUES_ETRANGERES
+  LINGUISTIQUE
+  TRADUCTION_INTERPRETARIAT
+  HISTOIRE
+  GEOGRAPHIE
+  PHILOSOPHIE
+  SOCIOLOGIE
+  ANTHROPOLOGIE
+  PSYCHOLOGIE
+  SCIENCES_EDUCATION
+  PEDAGOGIE
+  COMMUNICATION
+  JOURNALISME
+  COMMUNICATION_ENTREPRISES
+  PUBLICITE
+  PRODUCTION_AUDIOVISUELLE
+  MONTAGE_VIDEO
+  BTP
+  ARCHITECTURE
+  TOPOGRAPHIE
+  METRE_TOPO
+  PLOMBERIE
+  ELECTRICITE_BATIMENT
+  MENUISERIE_BOIS
+  MENUISERIE_METALLIQUE
+  SOUDURE
+  CONSTRUCTION_METALLIQUE
+  TOURISME
+  HOTELLERIE
+  RESTAURATION
+  PATISSERIE_BOULANGERIE
+  CUISINE
+  ARTS_PLASTIQUES
+  ARTISANAT
+  MUSIQUE
+  THEATRE
+  DANSE
+  ADMINISTRATION
+  SECRETARIAT_DIRECTION
+  SECRETARIAT_BUREAUTIQUE
+  ASSISTANT_DIRECTION
+  ARCHIVES
+  DOCUMENTATION
+  MECANIQUE_AUTO
+  MECANIQUE_INDUSTRIELLE
+  ELECTROMECANIQUE
+  FROID_CLIMATISATION
+  MAINTENANCE_INDUSTRIELLE
+  MAINTENANCE_ELECTRONIQUE
+  AUTRE
+}
+
+enum Langue {
+  FRANCAIS
+  ANGLAIS
+  ARABE
+  ESPAGNOL
+  PORTUGAIS
+  ITALIEN
+  ALLEMAND
+  RUSSE
+  CHINOIS
+  JAPONAIS
+  COREEN
+  AUTRE
+}
+
+/// Niveau d'étude — formulaire YouthConnekt Sahel (3e édition)
+enum YcsSahel3EducationLevel {
+  AUCUN
+  SECONDAIRE
+  LICENCE
+  MASTER
+  DOCTORAT
+}
+
+/// Intérêts principaux (multi-sélection) — YouthConnekt Sahel 3e édition
+enum YcsSahel3Interest {
+  ENTREPRENEURIAT
+  INNOVATION
+  EMPLOI
+  LEADERSHIP
+  FORMATION
+}
+
+/// Inscription événement YouthConnekt Sahel — 3e édition (formulaire candidat)
+model YouthConnektSahel3Registration {
+    id String @id @default(cuid())
+
+    // Informations personnelles
+    lastName             String
+    firstName            String
+    gender               Gender?
+    countryOfResidence   String
+    city                 String?
+    phone                String? /// WhatsApp de préférence
+    email                String?
+
+    // Profil socio-professionnel
+    educationLevel       YcsSahel3EducationLevel?
+    professionalStatus   ProfessionalStatus?
+    /// Domaine d'activité (texte libre ou liste applicative)
+    activityDomain       String?
+    organisationEntreprise String?
+
+    // Participation à l'événement
+    participatedYouthConnektBefore Boolean?
+    interests                      YcsSahel3Interest[]
+
+    // Entrepreneuriat
+    hasCompany     Boolean?
+    companyName    String?
+    companySector  String?
+
+    // Jeunesse & impact
+    isYouthOrganizationMember      Boolean?
+    hasBenefitedFromSupportProgram   Boolean?
+
+    /// Consentements — peut être false si le participant ne coche pas
+    consentEventOrganization   Boolean
+    consentAnonymousStatistics Boolean
+    consentReports             Boolean
+
+    /// Secret pour billet / QR côté front (template HTML, pas de génération serveur)
+    ticketToken String @unique @default(cuid())
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([email])
+    @@index([createdAt])
+    @@map("ycs_sahel3_registrations")
+}
+
 model User {
     id                    String                 @id @default(cuid())
     name                  String?
@@ -19,6 +257,14 @@ model User {
     lastName              String?
     email                 String?                @unique
     emailVerified         DateTime?
+    /// Valeurs par défaut : migration sûre sur lignes existantes + compléter en app / profil
+    phone                 String                 @default("")
+    gender                Gender                 @default(Masculin)
+    birthDate             DateTime               @default("2000-01-01T00:00:00.000Z")
+
+    nationality           String                 @default("")
+    country               String                 @default("")
+    city                  String                 @default("")
     image                 String?
     password              String?
     role                  UserRole               @default(USER)

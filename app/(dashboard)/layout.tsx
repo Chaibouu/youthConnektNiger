@@ -39,12 +39,16 @@ export default function DashboardLayout({
     return null;
   }
 
+  if (!user) {
+    return null;
+  }
+
   return (
     <div className="dashboard-theme dark:bg-boxdark-2 dark:text-bodydark">
       <div className="flex h-screen overflow-hidden">
         {/* <!-- ===== Sidebar Start ===== --> */}
         {/* <Sidebar navigation={adminNavigation} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} /> */}
-        <SidebarClear/>
+        <SidebarClear userRole={user.role} />
         {/* <!-- ===== Sidebar End ===== --> */}
 
         {/* <!-- ===== Content Area Start ===== --> */}

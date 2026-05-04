@@ -44,9 +44,8 @@
 //   .finally(async () => {
 //     await prisma.$disconnect();
 //   });
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Gender, UserRole } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { UserRole } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -75,6 +74,12 @@ async function main() {
           role: admin.role,
           emailVerified: admin.emailVerified,
           password: hashedPassword,
+          phone: "+22700000000",
+          gender: Gender.Masculin,
+          birthDate: new Date("1990-01-01"),
+          nationality: "Niger",
+          country: "Niger",
+          city: "Niamey",
         },
       });
     }
