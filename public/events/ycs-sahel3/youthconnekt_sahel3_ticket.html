@@ -4,1060 +4,839 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>Billet – YouthConnekt Sahel 3ème Édition</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Source+Code+Pro:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --green-deep:  #063d28;
-      --green-mid:   #0a5c3a;
-      --green-light: #1a7a4a;
-      --gold-dark:   #c9922a;
-      --gold:        #f0c060;
+      --green-deep:  #052e1c;
+      --green-mid:   #09532f;
+      --green-light: #18784a;
+      --gold-dark:   #c08520;
+      --gold:        #eeba50;
       --gold-light:  #f7d98a;
-      --orange:      #d94f1e;
-      --orange-2:    #e8701a;
+      --orange:      #d4491a;
+      --orange-2:    #e56e18;
       --white:       #ffffff;
-      --mint:        #a8d8b0;
-      --mint-dk:     #7ab890;
+      --mint:        #9ed0aa;
+      --mint-dk:     #6aab80;
+      --cream:       #faf5e4;
+
+      /* Overrideable by Next.js injected theme */
+      --primary:     #035740;
+      --secondary:   #e26e12;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     html {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      max-width: 100%;
-      overflow-x: clip;
-      overflow-y: auto;
+      width: 100%; max-width: 100%;
+      overflow-x: clip; overflow-y: auto;
       background: transparent;
       -webkit-text-size-adjust: 100%;
     }
 
     body {
-      margin: 0;
-      padding: 0;
-      overflow-x: clip;
-      background: transparent;
-      width: 100%;
-      max-width: 100%;
-      box-sizing: border-box;
-      /* Conteneur des requêtes : largeur = fenêtre de l’iframe / viewport (pas le billet lui‑même → évite le bug cqi circulaire) */
+      margin: 0; padding: 0;
+      overflow-x: clip; background: transparent;
+      width: 100%; max-width: 100%;
       container-type: inline-size;
       container-name: ticket;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      padding: max(12px, env(safe-area-inset-top, 0px))
-        max(12px, env(safe-area-inset-right, 0px))
-        max(12px, env(safe-area-inset-bottom, 0px))
-        max(12px, env(safe-area-inset-left, 0px));
-      gap: clamp(10px, 3vw, 16px);
+      padding: max(10px, env(safe-area-inset-top, 0px))
+               max(10px, env(safe-area-inset-right, 0px))
+               max(10px, env(safe-area-inset-bottom, 0px))
+               max(10px, env(safe-area-inset-left, 0px));
+      gap: clamp(8px, 2.5vw, 14px);
       font-family: 'Cormorant Garamond', Georgia, serif;
       min-height: 100dvh;
     }
 
-    /* ─── Page header ─── */
-    .page-header {
-      text-align: center;
-    }
-    .page-header h1 {
-      font-size: 11px;
-      letter-spacing: 5px;
-      color: var(--gold);
-      text-transform: uppercase;
-      opacity: 0.7;
-      font-weight: 400;
+    /* ─── Page header (standalone view only) ─── */
+    .demo-title { text-align: center; }
+    .demo-title h1 {
+      font-size: 11px; letter-spacing: 5px;
+      color: var(--gold); text-transform: uppercase;
+      opacity: 0.65; font-weight: 400;
     }
 
-    /* ═══════════════════════════════════
-       TICKET SHELL  (760 × 300 → scaled)
-       Ratio exact du SVG : 680 × 420 px
-       On utilise un SVG inline pour les
-       motifs, et des divs CSS par-dessus.
-    ═══════════════════════════════════ */
+    /* ══════════════════════════════════════
+       TICKET WRAP  ·  ratio 680 × 390
+    ══════════════════════════════════════ */
     .ticket-wrap {
       position: relative;
-      box-sizing: border-box;
-      width: 100%;
-      max-width: min(760px, 100%);
-      min-width: 0;
-      align-self: stretch;
+      width: 100%; max-width: min(800px, 100%);
+      min-width: 0; align-self: stretch;
       margin-inline: auto;
-      /* hauteur proportionnelle 420/680 — forme fixe */
-      aspect-ratio: 680 / 420;
-      /* Échelle liée au body (container queries), pas au billet lui‑même */
-      font-size: clamp(5px, 2.35vw, 14px);
-      font-size: clamp(5px, 2.85cqi, 14px);
-      filter: drop-shadow(0 10px 28px rgba(0,0,0,.22));
+      aspect-ratio: 680 / 390;
+      font-size: clamp(5px, 2.4vw, 14px);
+      font-size: clamp(5px, 2.95cqi, 14px);
+      filter:
+        drop-shadow(0 12px 32px rgba(0,0,0,.30))
+        drop-shadow(0 3px 8px rgba(0,0,0,.18));
     }
 
-    /* ── SVG background (occupe tout le ticket) ── */
+    /* ── SVG background layer ── */
     .ticket-svg-bg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
       pointer-events: none;
     }
 
-    /* ── Overlay HTML positionné en % ── */
-    /* Cadre du ticket SVG : x=30 y=20 w=620 h=380  sur viewBox 680×420
-       → left = 30/680 = 4.41%   top = 20/420 = 4.76%
-         width= 620/680 = 91.18% height=380/420 = 90.48%              */
+    /* ── Inner frame (CSS positioned over the SVG rect) ──
+       SVG rect: x=28 y=18 w=624 h=354 rx=14
+       left = 28/680=4.12%  top = 18/390=4.62%
+       w    = 624/680=91.76% h = 354/390=90.77%          */
     .ticket-frame {
       position: absolute;
-      left:   4.41%;
-      top:    4.76%;
-      width:  91.18%;
-      height: 90.48%;
-      border-radius: 2.35%; /* 16px / 680px */
+      left: 4.12%; top: 4.62%;
+      width: 91.76%; height: 90.77%;
+      border-radius: 2.06%; /* 14/680 */
       overflow: hidden;
     }
 
-    /* Fond dégradé vert */
+    /* Gradient background */
     .ticket-frame::before {
       content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, var(--green-mid), var(--green-deep));
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        128deg,
+        var(--green-deep)  0%,
+        var(--green-mid)   45%,
+        #0c6b3a            70%,
+        #094c2a            100%
+      );
       border-radius: inherit;
     }
 
-    /* Motifs triangles + grille via SVG pattern en bg */
+    /* Texture: triangles + crosshatch */
     .ticket-frame::after {
       content: '';
-      position: absolute;
-      inset: 0;
+      position: absolute; inset: 0;
       background-image:
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpolygon points='10,2 18,18 2,18' fill='none' stroke='%23ffffff' stroke-width='0.4' opacity='0.18'/%3E%3C/svg%3E"),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Crect width='30' height='30' fill='none' stroke='%23ffffff' stroke-width='0.3' opacity='0.10'/%3E%3Cline x1='0' y1='15' x2='30' y2='15' stroke='%23ffffff' stroke-width='0.2' opacity='0.08'/%3E%3Cline x1='15' y1='0' x2='15' y2='30' stroke='%23ffffff' stroke-width='0.2' opacity='0.08'/%3E%3C/svg%3E");
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22'%3E%3Cpolygon points='11,2 20,20 2,20' fill='none' stroke='%23ffffff' stroke-width='0.35' opacity='0.14'/%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Crect width='32' height='32' fill='none' stroke='%23f0c060' stroke-width='0.22' opacity='0.07'/%3E%3C/svg%3E");
+      background-size: 22px 22px, 32px 32px;
       border-radius: inherit;
+      pointer-events: none;
     }
 
-    /* ── Bandes losanges haut & bas ── */
+    /* ── Radial halos (light effects) ── */
+    .halo {
+      position: absolute; border-radius: 50%;
+      pointer-events: none; z-index: 1;
+    }
+    .halo-tl {
+      width: 55%; padding-bottom: 40%;
+      left: -8%; top: -15%;
+      background: radial-gradient(ellipse at center,
+        rgba(26,122,74,.38) 0%, transparent 65%);
+    }
+    .halo-br {
+      width: 45%; padding-bottom: 35%;
+      right: -5%; bottom: -10%;
+      background: radial-gradient(ellipse at center,
+        rgba(212,73,26,.22) 0%, transparent 65%);
+    }
+    .halo-center {
+      width: 40%; padding-bottom: 30%;
+      left: 25%; top: 20%;
+      background: radial-gradient(ellipse at center,
+        rgba(238,186,80,.06) 0%, transparent 60%);
+    }
+
+    /* ── Diamond bands (top & bottom) ── */
     .band {
-      position: absolute;
-      left: 0; right: 0;
-      height: 9.47%; /* 36/380 */
-      z-index: 4;
-      overflow: hidden;
+      position: absolute; left: 0; right: 0;
+      height: 9%;
+      z-index: 4; overflow: hidden;
     }
     .band.top    { top: 0; }
     .band.bottom { bottom: 0; }
 
     .band-gold {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-dark));
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg,
+        var(--gold-dark) 0%,
+        var(--gold) 30%,
+        var(--gold-light) 50%,
+        var(--gold) 70%,
+        var(--gold-dark) 100%);
     }
-    /* trait plus foncé sous la bande haut / au-dessus bande bas */
-    .band.top    .band-gold { border-bottom: max(2px, 0.22em) solid var(--gold-dark); }
-    .band.bottom .band-gold { border-top: max(2px, 0.22em) solid var(--gold-dark); }
+    /* Inner edge line */
+    .band.top    .band-gold { border-bottom: max(2px,.22em) solid var(--gold-dark); }
+    .band.bottom .band-gold { border-top:    max(2px,.22em) solid var(--gold-dark); }
+    /* Top highlight */
+    .band-gold::after {
+      content: '';
+      position: absolute; left: 0; right: 0;
+      height: 35%;
+      background: linear-gradient(to bottom, rgba(255,255,255,.25) 0%, transparent 100%);
+    }
 
-    /* losanges défilants */
+    /* Diamonds row */
     .diamonds-row {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
+      position: absolute; inset: 0;
+      display: flex; align-items: center;
       overflow: hidden;
     }
     .diamonds-inner {
-      display: flex;
-      align-items: center;
-      gap: 0;
+      display: flex; align-items: center; gap: 0;
     }
+    /* 3 diamond variants */
     .dm {
-      width: 1.85em;
-      height: 1.85em;
-      background: var(--green-deep);
-      transform: rotate(45deg) scale(.6);
+      width: 2em; height: 2em;
+      transform: rotate(45deg) scale(.58);
       flex-shrink: 0;
-      opacity: .75;
     }
+    .dm.dg { background: var(--green-deep); opacity: .80; }
+    .dm.do { background: var(--orange);     opacity: .70; }
+    .dm.dm2 { background: var(--mint-dk);   opacity: .55; }
 
-    /* ── Pilier gauche ── */
+    /* ── Left pillar ── */
     .pillar {
       position: absolute;
-      left: 0;
-      top: 9.47%;      /* commence après bande haut */
-      bottom: 9.47%;   /* s'arrête avant bande bas  */
-      width: 4.84%;    /* 18/372 ≈ 4.8% de la frame */
-      background: var(--green-light);
-      opacity: .7;
-      z-index: 4;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-evenly;
-      padding: 0.35em 0;
+      left: 0; top: 9%; bottom: 9%;
+      width: 5%;
+      background: linear-gradient(180deg, var(--green-light), var(--green-mid), var(--green-light));
+      opacity: .75; z-index: 4;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: space-evenly;
+      padding: 0.4em 0;
     }
     .pg {
-      width: 40%; aspect-ratio: 1;
+      width: 42%; aspect-ratio: 1;
       transform: rotate(45deg);
       flex-shrink: 0;
     }
     .pg.g { background: var(--gold);   }
     .pg.o { background: var(--orange); }
+    .pg.m { background: var(--mint);   opacity: .7; }
 
-    /* ── Séparateur souche ── */
-    /* Souche = x=494 → (494-30)/620 = 74.84% de la frame */
+    /* ── Corner ornaments ── */
+    .corner {
+      position: absolute; width: 6.5%; aspect-ratio: 1;
+      z-index: 11; pointer-events: none;
+    }
+    .corner.tl { left: 3.8%;  top: 4.3%;    }
+    .corner.tr { right: 3.8%; top: 4.3%;    transform: scaleX(-1); }
+    .corner.bl { left: 3.8%;  bottom: 4.3%; transform: scaleY(-1); }
+    .corner.br { right: 3.8%; bottom: 4.3%; transform: scale(-1);  }
+
+    /* ── Separator (main / stub) ──
+       stub starts at 74.5% of frame width */
     .separator {
-      position: absolute;
-      top: 0; bottom: 0;
-      left: 74.84%;
-      border-left: max(1px, 0.11em) dashed rgba(240,192,96,.6);
+      position: absolute; top: 0; bottom: 0;
+      left: 74.5%;
+      border-left: max(1px,.11em) dashed rgba(238,186,80,.55);
       z-index: 6;
     }
-    /* encoches (demi-cercles) */
+    /* Diamond at separator center */
+    .separator::after {
+      content: '';
+      position: absolute;
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%) rotate(45deg);
+      width: 1.1em; height: 1.1em;
+      background: var(--gold);
+      box-shadow: 0 0 0 max(2px,.18em) var(--green-mid),
+                  0 0 0 max(4px,.35em) var(--gold-dark);
+    }
+
+    /* Notches */
     .notch {
       position: absolute;
-      width: 3.5%;
-      aspect-ratio: 1;
-      background: transparent;
+      width: 3.2%; aspect-ratio: 1;
       border-radius: 50%;
-      left: 74.84%;
+      left: calc(4.12% + 91.76% * .745);
       transform: translateX(-50%);
       z-index: 8;
     }
-    .notch.top-n    { top: -1.8%;  }
-    .notch.bottom-n { bottom: -1.8%; }
+    .notch.top-n    { top: -1.6%;    }
+    .notch.bottom-n { bottom: -1.6%; }
 
-    /* ══════════════════════════════
-       CONTENU PRINCIPAL
-    ══════════════════════════════ */
-    /* Zone = x:48→494, y:58→370  dans frame 620×380
-       left=(48-0)/620=7.7%  top=(38)/380=10%
-       right=(620-494)/620=20.3%  bottom=(10)/380=2.6% */
+    /* ══════════════════════════
+       MAIN CONTENT
+    ══════════════════════════ */
     .main-content {
       position: absolute;
-      left: 7.7%;
-      top: 10%;
-      right: 20.3%;
-      bottom: 2.6%;
+      left: 8%; top: 10.5%;
+      right: 20%;
+      bottom: 3%;
       z-index: 7;
-      display: flex;
-      flex-direction: column;
+      display: flex; flex-direction: column;
       justify-content: flex-start;
-      padding: 2% 3% 1% 1%;
-      gap: 0;
-      min-height: 0;
+      padding: 1.8% 2.5% 1% 0.5%;
+      gap: 0; min-height: 0;
     }
 
-    /* Logo + titre */
+    /* Header row */
     .header-row {
-      display: flex;
-      align-items: center;
-      gap: 4%;
-      margin-bottom: 2%;
+      display: flex; align-items: center;
+      gap: 3.5%; margin-bottom: 1.8%;
     }
 
+    /* Logo circle */
     .logo-circle {
       flex-shrink: 0;
-      width: clamp(52px, 12%, 72px);
-      aspect-ratio: 1;
-      border-radius: 50%;
-      border: max(1.5px, 0.14em) solid var(--gold);
-      background: rgba(26,122,74,.45);
-      display: flex;
-      align-items: center;
+      width: clamp(48px, 11%, 68px);
+      aspect-ratio: 1; border-radius: 50%;
+      /* Double ring */
+      border: max(1.5px,.14em) solid rgba(238,186,80,.9);
+      outline: max(1px,.09em) solid rgba(238,186,80,.3);
+      outline-offset: max(3px,.28em);
+      background: rgba(24,120,74,.42);
+      display: flex; align-items: center;
       justify-content: center;
       position: relative;
     }
     .logo-star-svg {
-      position: absolute;
-      inset: 8%;
+      position: absolute; inset: 10%;
     }
     .logo-letters {
       position: relative;
-      font-size: clamp(9px, 1.6vw, 13px);
-      font-weight: 700;
-      color: var(--gold);
+      font-size: clamp(8px, 1.55cqi, 12px);
+      font-weight: 700; color: var(--gold);
       letter-spacing: 1px;
       font-family: Georgia, serif;
+      text-shadow: 0 1px 3px rgba(0,0,0,.4);
     }
 
-    .titles {
-      flex: 1;
-      min-width: 0;
-      overflow-wrap: anywhere;
-    }
+    /* Titles */
+    .titles { flex: 1; min-width: 0; overflow-wrap: anywhere; }
     .lbl-edition {
-      font-size: clamp(7px, 1vw, 10px);
-      letter-spacing: 3px;
-      color: var(--gold);
-      opacity: .88;
-      text-transform: uppercase;
+      font-size: clamp(6.5px,.9cqi, 9px);
+      letter-spacing: 3px; color: var(--gold-light);
+      opacity: .85; text-transform: uppercase;
       margin-bottom: 1px;
     }
     .t-youthconnekt {
-      font-size: clamp(14px, 3vw, 22px);
-      font-weight: 700;
-      color: var(--white);
-      letter-spacing: 1px;
-      line-height: 1;
+      font-size: clamp(13px, 2.8cqi, 21px);
+      font-weight: 700; color: var(--white);
+      letter-spacing: 1px; line-height: 1;
       font-family: Georgia, serif;
     }
     .t-sahel {
-      font-size: clamp(14px, 3vw, 22px);
-      font-weight: 700;
-      color: var(--gold);
-      letter-spacing: 2px;
-      line-height: 1;
+      font-size: clamp(13px, 2.8cqi, 21px);
+      font-weight: 700; color: var(--gold);
+      letter-spacing: 2px; line-height: 1.05;
       font-family: Georgia, serif;
     }
     .t-sub {
-      font-size: clamp(7px, 1vw, 11px);
-      color: var(--mint);
-      letter-spacing: 1px;
-      margin-top: 2px;
-      line-height: 1.35;
+      font-size: clamp(6.5px,.9cqi, 10px);
+      color: var(--mint); letter-spacing: .8px;
+      margin-top: 2px; line-height: 1.35;
     }
 
-    /* Diviseur doré avec triangles */
+    /* Divider — line · tri · ◇ · tri · line */
     .divider {
-      display: flex;
-      align-items: center;
-      gap: 3px;
-      margin: 3% 0 2%;
+      display: flex; align-items: center;
+      gap: 3px; margin: 2.8% 0 2.2%;
     }
     .div-line {
-      flex: 1;
-      height: 1.5px;
-      background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-dark));
-      opacity: .8;
+      flex: 1; height: 1.5px;
+      background: linear-gradient(90deg, transparent, var(--gold-dark), var(--gold), var(--gold-dark), transparent);
+      opacity: .75;
     }
     .tri {
       width: 0; height: 0;
-      border-left: 0.36em solid transparent;
-      border-right: 0.36em solid transparent;
+      border-left: .38em solid transparent;
+      border-right: .38em solid transparent;
     }
-    .tri.g { border-bottom: 0.5em solid var(--gold);   }
-    .tri.o { border-bottom: 0.5em solid var(--orange); }
+    .tri.g { border-bottom: .52em solid var(--gold);   }
+    .tri.o { border-bottom: .52em solid var(--orange); }
+    .div-diamond {
+      width: .65em; height: .65em;
+      background: var(--gold);
+      transform: rotate(45deg);
+      flex-shrink: 0;
+      box-shadow: 0 0 4px rgba(238,186,80,.6);
+    }
 
-    /* Infos participant */
+    /* Participant */
     .lbl {
-      font-size: clamp(6px,.9vw, 9px);
-      letter-spacing: 2px;
-      color: var(--mint);
-      text-transform: uppercase;
-      margin-bottom: 1px;
+      font-size: clamp(5.5px,.78cqi, 8.5px);
+      letter-spacing: 2.5px; color: var(--mint);
+      text-transform: uppercase; margin-bottom: 1px;
     }
     .p-name {
-      font-size: clamp(13px, 2.6vw, 20px);
-      font-weight: 700;
-      color: var(--white);
-      font-family: Georgia, serif;
-      line-height: 1.1;
+      font-size: clamp(12px, 2.45cqi, 19px);
+      font-weight: 700; color: var(--white);
+      font-family: Georgia, serif; line-height: 1.1;
+      text-shadow: 0 1px 4px rgba(0,0,0,.35);
     }
     .p-org {
-      font-size: clamp(9px, 1.4vw, 13px);
-      color: var(--gold);
-      margin-top: 1px;
+      font-size: clamp(8px, 1.2cqi, 12px);
+      color: var(--gold-light); margin-top: 1px;
+      letter-spacing: .4px;
     }
 
-    /* Ligne fine */
-    .thin { height: 1px; background: rgba(26,122,74,.55); margin: 2% 0 1%; }
+    /* Thin rule */
+    .thin { height: 1px; background: rgba(238,186,80,.22); margin: 2% 0 1.5%; }
 
-    /* Blocs date + lieu */
-    .detail-row {
-      display: flex;
-      gap: 2%;
-      margin-top: 0;
-    }
+    /* Date + Venue blocks */
+    .detail-row { display: flex; gap: 2%; margin-top: 0; }
     .d-block {
-      padding: 3% 4%;
+      padding: 2.5% 3.5%;
       border-radius: 5px;
-      border-left: 3px solid;
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
+      border-left: max(2.5px,.22em) solid;
+      display: flex; flex-direction: column; gap: 1px;
     }
-    .d-block.date-b  {
-      background: rgba(217,79,30,.13);
+    .d-block.date-b {
+      background: rgba(212,73,26,.14);
       border-color: var(--orange);
-      flex: 0 0 auto;
-      min-width: 28%;
+      flex: 0 0 auto; min-width: 28%;
     }
     .d-block.venue-b {
-      background: rgba(26,122,74,.18);
+      background: rgba(18,100,60,.25);
       border-color: var(--gold);
       flex: 1;
     }
     .d-lbl {
-      font-size: clamp(5.5px,.8vw, 8px);
-      letter-spacing: 2px;
-      color: var(--mint);
+      font-size: clamp(5px,.72cqi, 7.5px);
+      letter-spacing: 2px; color: var(--mint);
       text-transform: uppercase;
     }
     .d-dates {
-      font-size: clamp(12px,2vw,16px);
-      font-weight: 700;
-      color: var(--white);
-      font-family: Georgia, serif;
-      line-height: 1;
+      font-size: clamp(11px, 1.85cqi, 15px);
+      font-weight: 700; color: var(--white);
+      font-family: Georgia, serif; line-height: 1.05;
     }
     .d-year {
-      font-size: clamp(8px,1.2vw,11px);
+      font-size: clamp(7px, 1.1cqi, 10px);
       color: var(--gold);
     }
     .d-venue {
-      font-size: clamp(7px,1vw,10px);
-      font-weight: 600;
-      color: var(--white);
-      line-height: 1.35;
-      overflow-wrap: anywhere;
+      font-size: clamp(6.5px,.9cqi, 9.5px);
+      font-weight: 600; color: var(--white);
+      line-height: 1.35; overflow-wrap: anywhere;
     }
     .d-city {
-      font-size: clamp(6.5px,.9vw, 9px);
-      color: var(--mint);
-      margin-top: 1px;
+      font-size: clamp(6px,.82cqi, 8.5px);
+      color: var(--mint); margin-top: 1px;
     }
 
-    /* Référence — poussée en bas de la zone pour équilibrer la carte */
+    /* Reference */
     .ref {
       font-family: 'Source Code Pro', monospace;
-      font-size: clamp(6px,.85vw, 8.5px);
-      color: var(--mint-dk);
-      letter-spacing: 1px;
-      margin-top: auto;
-      padding-top: 1.5%;
-      flex-shrink: 0;
-      line-height: 1.25;
+      font-size: clamp(5.5px,.78cqi, 8px);
+      color: var(--mint-dk); letter-spacing: 1px;
+      margin-top: auto; padding-top: 1.8%;
+      flex-shrink: 0; line-height: 1.3;
+    }
+    .ref-code {
+      color: var(--gold-light); font-weight: 600;
     }
 
-    /* Motif cercles bas gauche (déco) */
-    .deco-circles {
+    /* Watermark stamp */
+    .stamp {
       position: absolute;
-      left: 1.5%;
-      bottom: 1%;
-      width: 8%;
-      aspect-ratio: 1;
-      z-index: 5;
-      opacity: .28;
+      right: 22%; bottom: 11%;
+      width: 18%; aspect-ratio: 1;
+      z-index: 2; opacity: .06;
+      pointer-events: none;
     }
 
-    /* ══════════════════════════════
-       SOUCHE DROITE
-    ══════════════════════════════ */
-    /* x=494 → (494-30)/620=74.84% de la frame, w=(650-494)/620=25.16% */
+    /* Deco circles (bottom-left) */
+    .deco-circles {
+      position: absolute; left: 1.8%; bottom: 1.2%;
+      width: 8%; aspect-ratio: 1;
+      z-index: 5; opacity: .22;
+    }
+
+    /* ══════════════════════════
+       STUB
+    ══════════════════════════ */
     .stub {
       position: absolute;
-      left: 74.84%;
-      top: 0; bottom: 0;
-      width: 25.16%;
+      left: 74.5%; top: 0; bottom: 0;
+      width: 25.5%;
       z-index: 7;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      overflow: hidden;
+      display: flex; flex-direction: column;
+      align-items: stretch; overflow: hidden;
     }
-    /* Voile désactivé — évite le fond sombre sur la souche */
-    .stub::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: transparent;
-    }
-    /* Points dorés */
+    /* Gold dot pattern */
     .stub::after {
       content: '';
-      position: absolute;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14'%3E%3Ccircle cx='7' cy='7' r='1.2' fill='%23f0c060' opacity='0.22'/%3E%3C/svg%3E");
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Ccircle cx='6' cy='6' r='1' fill='%23eeba50' opacity='0.2'/%3E%3C/svg%3E");
+      pointer-events: none;
     }
 
-    /* Badge orange en haut de la souche
-       y=26 → (26-20)/380=1.6% top dans frame;
-       height=26 → 6.8%                        */
+    /* Badge */
     .stub-badge {
-      position: relative;
-      width: 100%;
-      flex-shrink: 0;
-      z-index: 2;
-      background: linear-gradient(90deg, var(--orange), var(--orange-2));
-      text-align: center;
-      padding: 5.5% 0;
-      font-size: clamp(7px,.9vw, 10px);
-      font-weight: 700;
-      color: var(--white);
-      letter-spacing: 2px;
-      text-transform: uppercase;
+      position: relative; z-index: 2;
+      width: 100%; flex-shrink: 0;
+      background: linear-gradient(90deg, var(--orange) 0%, var(--orange-2) 60%, var(--gold-dark) 100%);
+      text-align: center; padding: 5.5% 0;
+      font-size: clamp(6.5px,.88cqi, 10px);
+      font-weight: 700; color: var(--white);
+      letter-spacing: 2.5px; text-transform: uppercase;
+      border-bottom: max(1px,.08em) solid rgba(255,255,255,.2);
+      box-shadow: 0 2px 8px rgba(0,0,0,.25);
     }
 
-    /* Corps souche : losanges contre la perforation (trait pointillé), texte à côté */
+    /* Stub body */
     .stub-body {
-      position: relative;
-      z-index: 2;
-      flex: 1;
-      min-height: 0;
-      width: 100%;
-      display: flex;
-      flex-direction: row;
-      align-items: stretch;
-      justify-content: flex-start;
-      gap: 0;
-      padding: 2% 5% 6% 0;
-      box-sizing: border-box;
+      position: relative; z-index: 2;
+      flex: 1; min-height: 0; width: 100%;
+      display: flex; flex-direction: row;
+      align-items: stretch; justify-content: flex-start;
+      padding: 2% 4.5% 5% 0;
     }
 
-    /* Losanges : même hauteur que la zone utile, alignés sur la ligne de séparation */
+    /* Gem column */
     .stub-gems {
-      flex: 0 0 auto;
-      align-self: stretch;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-evenly;
-      gap: clamp(4px, 1.1vw, 9px);
-      padding: 0.35em 0.55em 0.35em 0.35em;
-      margin: 0;
-      border-left: none;
-      border-right: max(1px, 0.11em) dashed rgba(240, 192, 96, 0.65);
+      flex: 0 0 auto; align-self: stretch;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: space-evenly;
+      gap: clamp(3px,.9cqi, 8px);
+      padding: 0.4em 0.5em 0.4em 0.4em;
+      border-right: max(1px,.1em) dashed rgba(238,186,80,.55);
     }
-
-    /* Titre vertical et bloc dates côte à côte — évite la superposition */
-    .stub-copy {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-      gap: clamp(8px, 2.5vw, 16px);
-      padding-left: 4%;
-      padding-right: 4%;
-      padding-top: 2%;
-      padding-bottom: 2%;
-      min-height: 0;
-      transform: translateY(-2px);
-    }
-
     .sg {
-      width: clamp(9px, 2.2vw, 14px);
-      aspect-ratio: 1;
-      transform: rotate(45deg);
-      flex-shrink: 0;
-      opacity: 0.75;
+      width: clamp(8px, 2cqi, 13px); aspect-ratio: 1;
+      transform: rotate(45deg); flex-shrink: 0;
     }
+    .sg.g  { background: var(--gold);   opacity: .82; }
+    .sg.o  { background: var(--orange); opacity: .75; }
+    .sg.m  { background: var(--mint);   opacity: .55; }
 
-    .sg.g { background: var(--gold);   }
-    .sg.o { background: var(--orange); }
+    /* Stub copy */
+    .stub-copy {
+      flex: 1; min-width: 0;
+      display: flex; flex-direction: row;
+      align-items: center; justify-content: center;
+      gap: clamp(6px, 2cqi, 14px);
+      padding: 2% 3% 2% 4%;
+      min-height: 0;
+    }
 
     .stub-vtext-wrap {
-      flex: 0 0 auto;
-      width: auto;
-      max-width: 42%;
-      min-height: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2px 4px;
+      flex: 0 0 auto; width: auto;
+      max-width: 42%; min-height: 0;
+      display: flex; align-items: center; justify-content: center;
     }
-
     .stub-vtext {
       margin: 0;
       transform: rotate(-90deg);
       transform-origin: center center;
       white-space: nowrap;
       font-family: Georgia, serif;
-      font-size: clamp(7px, 1vw, 11px);
-      font-weight: 700;
-      color: var(--gold);
-      letter-spacing: 2px;
-      pointer-events: none;
-      line-height: 1;
+      font-size: clamp(6.5px,.9cqi, 11px);
+      font-weight: 700; color: var(--gold);
+      letter-spacing: 2px; line-height: 1;
       text-align: center;
     }
 
     .stub-footer {
-      flex: 1;
-      min-width: 0;
-      margin-top: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 2px;
-      text-align: center;
+      flex: 1; min-width: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 2px; text-align: center;
     }
-
     .stub-dates {
-      margin: 0;
-      width: 100%;
       font-family: Georgia, serif;
-      font-size: clamp(9px, 1.3vw, 13px);
-      font-weight: 700;
-      color: var(--white);
+      font-size: clamp(8px, 1.2cqi, 13px);
+      font-weight: 700; color: var(--white);
       line-height: 1.2;
-      text-align: center;
     }
-
     .stub-month {
-      margin: 0;
-      width: 100%;
-      font-size: clamp(8px, 1.1vw, 11px);
-      color: var(--gold);
-      line-height: 1.2;
-      text-align: center;
+      font-size: clamp(7px, 1cqi, 11px);
+      color: var(--gold); line-height: 1.2;
     }
-
     .stub-venue-s {
-      margin: 0;
-      width: 100%;
-      font-size: clamp(6px, 0.85vw, 9px);
-      color: var(--mint);
-      letter-spacing: 0.5px;
+      font-size: clamp(5.5px,.75cqi, 8.5px);
+      color: var(--mint); letter-spacing: .5px;
       line-height: 1.2;
-      text-align: center;
     }
 
-    /* ── Bordure extérieure or (via SVG overlay) ── */
-    .ticket-border-svg {
+    /* QR placeholder */
+    .stub-qr {
       position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 10;
+      right: 4.5%; bottom: 6%;
+      width: 22%; aspect-ratio: 1;
+      z-index: 3;
     }
 
-    /* ══════════════════════════════
-       BOUTONS
-    ══════════════════════════════ */
+    /* ── Gold border overlay ── */
+    .ticket-border-svg {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none; z-index: 10;
+    }
+
+    /* ══════════════════════
+       BUTTONS (standalone)
+    ══════════════════════ */
     .actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      justify-content: center;
+      display: flex; gap: 12px;
+      flex-wrap: wrap; justify-content: center;
     }
     .btn {
-      padding: 10px 28px;
-      border-radius: 8px;
+      padding: 10px 28px; border-radius: 8px;
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      cursor: pointer;
-      border: none;
-      transition: opacity .2s, transform .15s;
+      font-size: 15px; font-weight: 600;
+      letter-spacing: 1px; cursor: pointer;
+      border: none; transition: opacity .2s, transform .15s;
     }
     .btn:hover  { opacity: .85; transform: translateY(-1px); }
     .btn:active { transform: scale(.97); }
-    .btn-gold { background: var(--gold); color: var(--green-deep); }
+    .btn-gold    { background: var(--gold); color: var(--green-deep); }
     .btn-outline {
-      background: transparent;
-      color: var(--gold);
+      background: transparent; color: var(--gold);
       border: 1px solid var(--gold-dark);
     }
 
-    /* Modale personnalisation */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.75);
-      z-index: 100;
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal {
-      background: #0e2218;
-      border: 1px solid var(--gold-dark);
-      border-radius: 12px;
-      padding: 32px;
-      width: min(440px, 90vw);
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-    .modal h2 {
-      font-family: Georgia, serif;
-      font-size: 18px;
-      color: var(--gold);
-      font-weight: 700;
-    }
-    .field { display: flex; flex-direction: column; gap: 5px; }
-    .field label {
-      font-size: 10px;
-      letter-spacing: 2px;
-      color: var(--mint);
-      text-transform: uppercase;
-    }
-    .field input {
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(201,146,42,.4);
-      border-radius: 6px;
-      padding: 9px 12px;
-      color: var(--white);
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 15px;
-      outline: none;
-      transition: border-color .2s;
-    }
-    .field input:focus { border-color: var(--gold); }
-    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
-
-    /*
-      Mobile / billet étroit : tout passe à l’échelle (cqi = % largeur body / iframe)
-      pour garder la même hiérarchie visuelle que sur la maquette desktop.
-    */
+    /* ══════════════════════
+       RESPONSIVE
+    ══════════════════════ */
     @container ticket (max-width: 560px) {
-      .ticket-wrap {
-        font-size: clamp(3.6px, 2.35cqi, 10.5px);
-      }
-      .page-header h1 {
-        font-size: 9px;
-        letter-spacing: 3px;
-      }
-      .logo-circle {
-        width: clamp(30px, 10.5cqi, 52px);
-      }
-      .logo-letters {
-        font-size: clamp(6px, 1.05cqi, 11px);
-      }
-      .lbl-edition {
-        font-size: clamp(4.5px, 0.68cqi, 8px);
-        letter-spacing: 2px;
-      }
-      .t-youthconnekt,
-      .t-sahel {
-        font-size: clamp(9px, 1.85cqi, 17px);
-      }
-      .t-sub {
-        font-size: clamp(5px, 0.72cqi, 9px);
-      }
-      .lbl {
-        font-size: clamp(4.5px, 0.62cqi, 7.5px);
-      }
-      .p-name {
-        font-size: clamp(8px, 1.65cqi, 15px);
-      }
-      .p-org {
-        font-size: clamp(6px, 0.95cqi, 11px);
-      }
-      .d-lbl {
-        font-size: clamp(4px, 0.52cqi, 7px);
-      }
-      .d-dates {
-        font-size: clamp(8px, 1.45cqi, 13px);
-      }
-      .d-year {
-        font-size: clamp(6px, 0.85cqi, 9px);
-      }
-      .d-venue {
-        font-size: clamp(5.5px, 0.75cqi, 8.5px);
-      }
-      .d-city {
-        font-size: clamp(5px, 0.68cqi, 8px);
-      }
-      .ref {
-        font-size: clamp(4px, 0.58cqi, 7px);
-      }
-      .stub-badge {
-        font-size: clamp(5px, 0.68cqi, 9px);
-        letter-spacing: 1.5px;
-      }
-      .stub-gems {
-        gap: clamp(3px, 0.75cqi, 8px);
-      }
-      .stub-copy {
-        gap: clamp(4px, 1.7cqi, 14px);
-      }
-      .sg {
-        width: clamp(6px, 1.65cqi, 11px);
-      }
-      .stub-vtext {
-        font-size: clamp(5px, 0.72cqi, 9px);
-        letter-spacing: 1.5px;
-      }
-      .stub-dates {
-        font-size: clamp(7px, 0.95cqi, 11px);
-      }
-      .stub-month {
-        font-size: clamp(6px, 0.82cqi, 10px);
-      }
-      .stub-venue-s {
-        font-size: clamp(4.5px, 0.62cqi, 8px);
-      }
-      /* Motifs bandeaux : losanges plus petits */
-      .dm {
-        transform: rotate(45deg) scale(0.5);
-      }
-      /* Grille / triangles de fond plus fins */
-      .ticket-frame::after {
-        background-size: 13px 13px, 19px 19px;
-      }
-      .stub::after {
-        background-size: 9px 9px;
-      }
-      .deco-circles {
-        opacity: 0.22;
-      }
-      /* Espacements & lisibilité du bloc principal */
-      .main-content {
-        padding: 1.65% 2.85% 0.55% 1%;
-      }
-      .header-row {
-        align-items: flex-start;
-        gap: 3.5%;
-        margin-bottom: 1.6%;
-      }
-      .t-youthconnekt,
-      .t-sahel {
-        line-height: 1.07;
-      }
-      .divider {
-        margin: 2.3% 0 1.7%;
-      }
-      .thin {
-        margin: 1.7% 0 1.1%;
-      }
-      .lbl {
-        margin-bottom: 2px;
-      }
-      .p-name {
-        line-height: 1.12;
-      }
-      .detail-row {
-        gap: 1.8%;
-        align-items: flex-start;
-      }
-      .d-block {
-        padding: 2.4% 3.2%;
-      }
-      .d-block.date-b {
-        flex: 0 1 auto;
-        max-width: 44%;
-      }
-      .d-block.venue-b {
-        min-width: 0;
-      }
-      .stub-body {
-        padding: 1.8% 4.5% 5.5% 0;
-      }
-      .stub-vtext-wrap {
-        max-width: 36%;
-        min-width: 0;
-      }
-      .stub-copy {
-        transform: translateY(-1px);
-      }
+      .ticket-wrap { font-size: clamp(3.6px, 2.4cqi, 10.5px); }
+      .logo-circle { width: clamp(28px, 10cqi, 50px); }
+      .dm { transform: rotate(45deg) scale(.5); }
+      .ticket-frame::after { background-size: 14px 14px, 20px 20px; }
+      .stub::after { background-size: 9px 9px; }
+      .main-content { padding: 1.6% 2.5% .5% .5%; }
+      .header-row { gap: 3%; margin-bottom: 1.5%; }
+      .divider { margin: 2% 0 1.5%; }
+      .thin { margin: 1.5% 0 1%; }
+      .detail-row { gap: 1.5%; }
+      .d-block { padding: 2% 2.8%; }
+      .stub-body { padding: 1.8% 4% 4.5% 0; }
+      .stub-gems { gap: clamp(2px,.7cqi, 6px); }
+      .corner { width: 8%; }
     }
 
     @container ticket (max-width: 400px) {
-      .ticket-wrap {
-        font-size: clamp(3.25px, 2.15cqi, 9.5px);
-      }
-      .dm {
-        transform: rotate(45deg) scale(0.44);
-      }
-      .ticket-frame::after {
-        background-size: 11px 11px, 16px 16px;
-      }
-      .stub::after {
-        background-size: 8px 8px;
-      }
-      .main-content {
-        padding: 1.45% 2.6% 0.45% 0.85%;
-      }
-      .stub-vtext-wrap {
-        max-width: 34%;
-      }
-      .stub-footer {
-        gap: 1px;
-      }
+      .ticket-wrap { font-size: clamp(3.2px, 2.2cqi, 9px); }
+      .dm { transform: rotate(45deg) scale(.44); }
+      .stub-qr { display: none; }
+      .stamp { display: none; }
+      .corner { display: none; }
     }
 
-    /* Billets étroits : compacter sans changer la silhouette globale */
-    @container ticket (max-width: 380px) {
-      .main-content {
-        padding: 1.35% 2.35% 0.4% 0.65%;
-      }
-      .header-row {
-        gap: 3%;
-        margin-bottom: 1.4%;
-      }
-      .stub-copy {
-        gap: clamp(4px, 1.8cqi, 11px);
-        padding-left: 2.5%;
-        padding-right: 2.5%;
-      }
-      .stub-vtext {
-        letter-spacing: 1px;
-      }
-      .stub-badge {
-        padding: 5% 0;
-      }
-    }
-
-    /* Passage date / lieu en colonne seulement sur très petit écran pour garder la mise en page « comme la maquette » plus longtemps */
-    @container ticket (max-width: 260px) {
-      .detail-row {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 6px;
-      }
-      .d-block.date-b {
-        min-width: unset;
-      }
-      .d-block {
-        padding: 2.5% 3%;
-      }
-      .lbl-edition {
-        letter-spacing: 2px;
-      }
+    @container ticket (max-width: 280px) {
+      .detail-row { flex-direction: column; align-items: stretch; gap: 5px; }
+      .d-block.date-b { min-width: unset; }
     }
 
     /* Print */
+    @page { margin: 0; size: 240mm 140mm landscape; }
     @media print {
       html { overflow: visible; }
       body {
-        background: white;
-        padding: 0;
-        gap: 0;
-        min-height: 0;
+        /* Keep container-type: inline-size so cqi units still resolve */
+        padding: 0; gap: 0; min-height: 0;
+        /* Force backgrounds (gradients, colors) to print */
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
       }
-      .page-header, .actions { display: none; }
-      body {
-        container-type: normal;
-      }
+      .demo-title, .actions { display: none; }
       .ticket-wrap {
         filter: none;
-        width: 100%;
-        font-size: 12pt;
-        max-width: none;
+        width: 100%; max-width: none;
+        /* font-size falls back to cqi clamp correctly since container = page width */
       }
-      .notch { background: white; }
+      /* Hide notches cleanly (they sit outside the ticket border) */
+      .notch { display: none; }
     }
   </style>
 </head>
 <body>
 
-<div class="page-header">
+<div class="demo-title">
   <h1>YouthConnekt Sahel &middot; 3ème Édition &middot; Billet Officiel</h1>
 </div>
 
 <!-- ════════════ TICKET ════════════ -->
 <div class="ticket-wrap">
 
-  <!-- SVG de fond (motifs, patterns) -->
-  <svg class="ticket-svg-bg" viewBox="0 0 680 420" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <!-- SVG background: gradient rect + halos -->
+  <svg class="ticket-svg-bg" viewBox="0 0 680 390" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <defs>
       <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%"   stop-color="#0a5c3a"/>
-        <stop offset="100%" stop-color="#063d28"/>
+        <stop offset="0%"   stop-color="#09532f"/>
+        <stop offset="40%"  stop-color="#063d25"/>
+        <stop offset="100%" stop-color="#041e14"/>
       </linearGradient>
+      <radialGradient id="haloTL" cx="20%" cy="25%" r="55%">
+        <stop offset="0%"   stop-color="#1a7a4a" stop-opacity=".55"/>
+        <stop offset="100%" stop-color="#063d25" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="haloBR" cx="80%" cy="78%" r="50%">
+        <stop offset="0%"   stop-color="#c4470f" stop-opacity=".28"/>
+        <stop offset="100%" stop-color="#063d25" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="haloCenter" cx="50%" cy="50%" r="40%">
+        <stop offset="0%"   stop-color="#eeba50" stop-opacity=".06"/>
+        <stop offset="100%" stop-color="#063d25" stop-opacity="0"/>
+      </radialGradient>
     </defs>
-    <!-- fond vert dégradé avec coins arrondis -->
-    <rect x="30" y="20" width="620" height="380" rx="16" fill="url(#bgGrad)"/>
+    <!-- Base rect -->
+    <rect x="28" y="18" width="624" height="354" rx="14" fill="url(#bgGrad)"/>
+    <!-- Halos -->
+    <rect x="28" y="18" width="624" height="354" rx="14" fill="url(#haloTL)"/>
+    <rect x="28" y="18" width="624" height="354" rx="14" fill="url(#haloBR)"/>
+    <rect x="28" y="18" width="624" height="354" rx="14" fill="url(#haloCenter)"/>
   </svg>
 
-  <!-- Frame du ticket (motifs CSS + enfants) -->
+  <!-- Frame -->
   <div class="ticket-frame">
 
-    <!-- Bande haut -->
-    <div class="band top">
+    <!-- Top diamond band -->
+    <div class="band top" aria-hidden="true">
       <div class="band-gold"></div>
-      <div class="diamonds-row" aria-hidden="true">
+      <div class="diamonds-row">
         <div class="diamonds-inner">
-          <!-- 60 losanges × 2 pour loop -->
-          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
-          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
-          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
-          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
-          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
-          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
-          <!-- dupliqué -->
-          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
-          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
-          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
-          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
-          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
-          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+          <!-- 72 diamonds, alternating g/o/m2 -->
+          <div class="dm dg"></div><div class="dm do"></div><div class="dm dm2"></div>
+          <div class="dm dg"></div><div class="dm do"></div><div class="dm dm2"></div>
+          <div class="dm dg"></div><div class="dm do"></div><div class="dm dm2"></div>
+          <div class="dm dg"></div><div class="dm do"></div><div class="dm dm2"></div>
+          <div class="dm dg"></div><div class="dm do"></div><div class="dm dm2"></div>
+          <div class="dm dg"></div><div class="dm do"></div><div class="dm dm2"></div>
+          <div class="dm dg"></div><div class="dm do"></div><div class="dm dm2"></div>
+          <div class="dm dg"></div><div class="dm do"></div><div class="dm dm2"></div>
+          <div class="dm dg"></div><div class="dm do"></div><div class="dm dm2"></div>
+          <div class="dm dg"></div><div class="dm do"></div><div class="dm dm2"></div>
+          <div class="dm dg"></div><div class="dm do"></div><div class="dm dm2"></div>
+          <div class="dm dg"></div><div class="dm do"></div><div class="dm dm2"></div>
+          <!-- duplicate for seamless fill -->
+          <div class="dm dg"></div><div class="dm do"></div><div class="dm dm2"></div>
+          <div class="dm dg"></div><div class="dm do"></div><div class="dm dm2"></div>
+          <div class="dm dg"></div><div class="dm do"></div><div class="dm dm2"></div>
+          <div class="dm dg"></div><div class="dm do"></div><div class="dm dm2"></div>
+          <div class="dm dg"></div><div class="dm do"></div><div class="dm dm2"></div>
+          <div class="dm dg"></div><div class="dm do"></div><div class="dm dm2"></div>
+          <div class="dm dg"></div><div class="dm do"></div><div class="dm dm2"></div>
+          <div class="dm dg"></div><div class="dm do"></div><div class="dm dm2"></div>
+          <div class="dm dg"></div><div class="dm do"></div><div class="dm dm2"></div>
+          <div class="dm dg"></div><div class="dm do"></div><div class="dm dm2"></div>
+          <div class="dm dg"></div><div class="dm do"></div><div class="dm dm2"></div>
+          <div class="dm dg"></div><div class="dm do"></div><div class="dm dm2"></div>
         </div>
       </div>
     </div>
 
-    <!-- Bande bas -->
-    <div class="band bottom">
+    <!-- Bottom diamond band -->
+    <div class="band bottom" aria-hidden="true">
       <div class="band-gold"></div>
-      <div class="diamonds-row" aria-hidden="true">
+      <div class="diamonds-row">
         <div class="diamonds-inner">
-          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
-          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
-          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
-          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
-          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
-          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
-          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
-          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
-          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
-          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
-          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
-          <div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div><div class="dm"></div>
+          <div class="dm dm2"></div><div class="dm do"></div><div class="dm dg"></div>
+          <div class="dm dm2"></div><div class="dm do"></div><div class="dm dg"></div>
+          <div class="dm dm2"></div><div class="dm do"></div><div class="dm dg"></div>
+          <div class="dm dm2"></div><div class="dm do"></div><div class="dm dg"></div>
+          <div class="dm dm2"></div><div class="dm do"></div><div class="dm dg"></div>
+          <div class="dm dm2"></div><div class="dm do"></div><div class="dm dg"></div>
+          <div class="dm dm2"></div><div class="dm do"></div><div class="dm dg"></div>
+          <div class="dm dm2"></div><div class="dm do"></div><div class="dm dg"></div>
+          <div class="dm dm2"></div><div class="dm do"></div><div class="dm dg"></div>
+          <div class="dm dm2"></div><div class="dm do"></div><div class="dm dg"></div>
+          <div class="dm dm2"></div><div class="dm do"></div><div class="dm dg"></div>
+          <div class="dm dm2"></div><div class="dm do"></div><div class="dm dg"></div>
+          <div class="dm dm2"></div><div class="dm do"></div><div class="dm dg"></div>
+          <div class="dm dm2"></div><div class="dm do"></div><div class="dm dg"></div>
+          <div class="dm dm2"></div><div class="dm do"></div><div class="dm dg"></div>
+          <div class="dm dm2"></div><div class="dm do"></div><div class="dm dg"></div>
+          <div class="dm dm2"></div><div class="dm do"></div><div class="dm dg"></div>
+          <div class="dm dm2"></div><div class="dm do"></div><div class="dm dg"></div>
+          <div class="dm dm2"></div><div class="dm do"></div><div class="dm dg"></div>
+          <div class="dm dm2"></div><div class="dm do"></div><div class="dm dg"></div>
+          <div class="dm dm2"></div><div class="dm do"></div><div class="dm dg"></div>
+          <div class="dm dm2"></div><div class="dm do"></div><div class="dm dg"></div>
+          <div class="dm dm2"></div><div class="dm do"></div><div class="dm dg"></div>
+          <div class="dm dm2"></div><div class="dm do"></div><div class="dm dg"></div>
         </div>
       </div>
     </div>
 
-    <!-- Pilier gauche -->
+    <!-- Left pillar (gold/orange/mint alternating) -->
     <div class="pillar" aria-hidden="true">
-      <div class="pg g"></div><div class="pg o"></div>
-      <div class="pg g"></div><div class="pg o"></div>
-      <div class="pg g"></div><div class="pg o"></div>
+      <div class="pg g"></div><div class="pg o"></div><div class="pg m"></div>
+      <div class="pg g"></div><div class="pg o"></div><div class="pg m"></div>
       <div class="pg g"></div>
     </div>
 
-    <!-- Séparateur souche + encoches -->
+    <!-- Separator + center diamond -->
     <div class="separator" aria-hidden="true"></div>
 
-    <!-- ─── CONTENU PRINCIPAL ─── -->
+    <!-- Watermark stamp -->
+    <div class="stamp" aria-hidden="true">
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="46" stroke="#eeba50" stroke-width="2.5"/>
+        <circle cx="50" cy="50" r="38" stroke="#eeba50" stroke-width="1"/>
+        <text x="50" y="40" text-anchor="middle" fill="#eeba50"
+              font-family="Georgia,serif" font-size="9" letter-spacing="3" font-weight="700">OFFICIEL</text>
+        <text x="50" y="54" text-anchor="middle" fill="#eeba50"
+              font-family="Georgia,serif" font-size="7.5" letter-spacing="2">BILLET</text>
+        <text x="50" y="67" text-anchor="middle" fill="#eeba50"
+              font-family="Georgia,serif" font-size="6.5" letter-spacing="1.5">YCS · 2026</text>
+        <polygon points="50,18 53,27 63,27 55,33 58,42 50,36 42,42 45,33 37,27 47,27"
+                 fill="#eeba50" opacity=".7"/>
+      </svg>
+    </div>
+
+    <!-- Deco circles -->
+    <div class="deco-circles" aria-hidden="true">
+      <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="30" cy="30" r="28" stroke="#eeba50" stroke-width="1.4"/>
+        <circle cx="30" cy="30" r="19" stroke="#eeba50" stroke-width="1"/>
+        <circle cx="30" cy="30" r="8"  stroke="#eeba50" stroke-width=".8"/>
+        <circle cx="30" cy="30" r="2.5" fill="#eeba50"/>
+      </svg>
+    </div>
+
+    <!-- MAIN CONTENT -->
     <div class="main-content">
 
-      <!-- Logo + titres (calqués sur SVG : cx=108 cy=118) -->
       <div class="header-row">
+        <!-- Logo -->
         <div class="logo-circle">
           <svg class="logo-star-svg" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <circle cx="26" cy="26" r="25" fill="rgba(26,122,74,0.0)" stroke="#f0c060" stroke-width="1.5"/>
-            <polygon points="26,4 30,17 44,17 33,25 37,38 26,30 15,38 19,25 8,17 22,17"
-                     fill="#f0c060" opacity="0.9"/>
+            <circle cx="26" cy="26" r="24" stroke="#eeba50" stroke-width="1.2" opacity=".6"/>
+            <circle cx="26" cy="26" r="19" stroke="#eeba50" stroke-width=".6" opacity=".35"/>
+            <polygon points="26,5 30,17 43,17 33,25 37,37 26,29 15,37 19,25 9,17 22,17"
+                     fill="#eeba50" opacity=".92"/>
           </svg>
           <span class="logo-letters">YC</span>
         </div>
 
         <div class="titles">
-          <p class="lbl-edition">3ème Édition</p>
+          <p class="lbl-edition">3ème Édition &middot; Niger</p>
           <p class="t-youthconnekt">YouthConnekt</p>
           <p class="t-sahel">Sahel</p>
           <p class="t-sub">Autonomisation des jeunes du Sahel &middot; Niger</p>
         </div>
       </div>
 
-      <!-- Diviseur doré -->
+      <!-- Divider: line ▲◇▲ line -->
       <div class="divider">
         <div class="div-line"></div>
         <div class="tri g"></div>
+        <div class="div-diamond"></div>
         <div class="tri o"></div>
+        <div class="div-diamond" style="background:var(--orange);box-shadow:0 0 4px rgba(212,73,26,.5)"></div>
         <div class="tri g"></div>
         <div class="div-line"></div>
       </div>
 
       <!-- Participant -->
       <p class="lbl">Participant</p>
-      <p class="p-name" id="p-name">Prénom NOM</p>
-      <p class="p-org"  id="p-org">Organisation &middot; Niger</p>
+      <p class="p-name" id="p-name">__YCS_NAME__</p>
+      <p class="p-org"  id="p-org">__YCS_EVENT__</p>
 
       <div class="thin"></div>
 
-      <!-- Date + Lieu -->
+      <!-- Date + Venue -->
       <div class="detail-row">
         <div class="d-block date-b">
-          <p class="d-lbl">Dates</p>
-          <p class="d-dates">10 &middot; 11 &middot; 12</p>
-          <p class="d-year">Août 2026</p>
+          <p class="d-lbl">Date</p>
+          <p class="d-dates">__YCS_META_DAY__</p>
+          <p class="d-year">__YCS_META_DATE__</p>
+          <p class="d-year" style="color:var(--mint);font-size:clamp(5.5px,.76cqi,8px)">__YCS_META_TIME__</p>
         </div>
         <div class="d-block venue-b">
           <p class="d-lbl">Lieu</p>
@@ -1066,114 +845,113 @@
         </div>
       </div>
 
-      <!-- Référence -->
-      <p class="ref" id="ref-txt">Réf. YCS3-000000 &middot; youthconnektsahel.ne</p>
+      <!-- Reference -->
+      <p class="ref" id="ref-txt">
+        Réf. <span class="ref-code">__YCS_REF__</span>
+        &middot; __YCS_STUB_META__
+      </p>
 
     </div><!-- /main-content -->
 
-    <!-- Déco cercles bas gauche -->
-    <div class="deco-circles" aria-hidden="true">
-      <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="30" cy="30" r="27" stroke="#f0c060" stroke-width="1.2"/>
-        <circle cx="30" cy="30" r="17" stroke="#f0c060" stroke-width="1"/>
-        <circle cx="30" cy="30" r="6"  fill="#f0c060"/>
-      </svg>
-    </div>
-
-    <!-- ─── SOUCHE ─── -->
+    <!-- STUB -->
     <div class="stub">
       <div class="stub-badge">Participant</div>
 
       <div class="stub-body">
+        <!-- Gem column -->
         <div class="stub-gems" aria-hidden="true">
-          <div class="sg g"></div><div class="sg o"></div>
-          <div class="sg g"></div><div class="sg o"></div>
-          <div class="sg g"></div><div class="sg o"></div>
-          <div class="sg g"></div><div class="sg o"></div>
-          <div class="sg g"></div>
+          <div class="sg g"></div><div class="sg o"></div><div class="sg m"></div>
+          <div class="sg g"></div><div class="sg o"></div><div class="sg m"></div>
+          <div class="sg g"></div><div class="sg o"></div><div class="sg g"></div>
         </div>
 
         <div class="stub-copy">
           <div class="stub-vtext-wrap">
-            <p class="stub-vtext">YouthConnekt Sahel &middot; Niger</p>
+            <p class="stub-vtext">YouthConnekt Sahel · Niger</p>
           </div>
           <div class="stub-footer">
-            <p class="stub-dates">10 &middot; 11 &middot; 12</p>
-            <p class="stub-month">Août 2026</p>
-            <p class="stub-venue-s">CICMG &middot; Niamey</p>
+            <p class="stub-dates">__YCS_META_DAY__</p>
+            <p class="stub-month">__YCS_META_DATE__</p>
+            <p class="stub-venue-s">CICMG · Niamey</p>
           </div>
         </div>
       </div>
+
+      <!-- QR placeholder -->
+      <div class="stub-qr" aria-hidden="true" title="QR Code">
+        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="36" height="36" rx="3" fill="rgba(255,255,255,.12)"/>
+          <rect x="2" y="2" width="14" height="14" rx="2" fill="none" stroke="#eeba50" stroke-width="1.5"/>
+          <rect x="5" y="5" width="5" height="5" rx="1" fill="#eeba50" opacity=".8"/>
+          <rect x="20" y="2" width="14" height="14" rx="2" fill="none" stroke="#eeba50" stroke-width="1.5"/>
+          <rect x="23" y="5" width="5" height="5" rx="1" fill="#eeba50" opacity=".8"/>
+          <rect x="2" y="20" width="14" height="14" rx="2" fill="none" stroke="#eeba50" stroke-width="1.5"/>
+          <rect x="5" y="23" width="5" height="5" rx="1" fill="#eeba50" opacity=".8"/>
+          <rect x="20" y="20" width="4" height="4" rx=".5" fill="#eeba50" opacity=".6"/>
+          <rect x="26" y="20" width="4" height="4" rx=".5" fill="#eeba50" opacity=".6"/>
+          <rect x="20" y="26" width="4" height="4" rx=".5" fill="#eeba50" opacity=".6"/>
+          <rect x="26" y="26" width="4" height="4" rx=".5" fill="#eeba50" opacity=".6"/>
+          <rect x="24" y="23" width="2" height="2" fill="#eeba50" opacity=".4"/>
+        </svg>
+      </div>
+
     </div><!-- /stub -->
 
   </div><!-- /ticket-frame -->
 
-  <!-- Encoches découpées -->
+  <!-- Notches -->
   <div class="notch top-n"    aria-hidden="true"></div>
   <div class="notch bottom-n" aria-hidden="true"></div>
 
-  <!-- Bordure extérieure dorée via SVG -->
-  <svg class="ticket-border-svg" viewBox="0 0 680 420" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <rect x="30" y="20" width="620" height="380" rx="16"
-          fill="none" stroke="#c9922a" stroke-width="2"/>
+  <!-- Corner ornaments -->
+  <svg class="corner tl" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M2 20 L2 4 Q2 2 4 2 L20 2" stroke="#c08520" stroke-width="1.5"/>
+    <path d="M2 20 L2 4 Q2 2 4 2 L20 2" stroke="#eeba50" stroke-width=".8" opacity=".6"/>
+    <rect x="8" y="8" width="7" height="7" transform="rotate(45 11.5 11.5)" fill="none" stroke="#eeba50" stroke-width="1"/>
+    <rect x="10.5" y="10.5" width="2" height="2" transform="rotate(45 11.5 11.5)" fill="#eeba50" opacity=".8"/>
+  </svg>
+  <svg class="corner tr" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M2 20 L2 4 Q2 2 4 2 L20 2" stroke="#c08520" stroke-width="1.5"/>
+    <path d="M2 20 L2 4 Q2 2 4 2 L20 2" stroke="#eeba50" stroke-width=".8" opacity=".6"/>
+    <rect x="8" y="8" width="7" height="7" transform="rotate(45 11.5 11.5)" fill="none" stroke="#eeba50" stroke-width="1"/>
+    <rect x="10.5" y="10.5" width="2" height="2" transform="rotate(45 11.5 11.5)" fill="#eeba50" opacity=".8"/>
+  </svg>
+  <svg class="corner bl" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M2 20 L2 4 Q2 2 4 2 L20 2" stroke="#c08520" stroke-width="1.5"/>
+    <path d="M2 20 L2 4 Q2 2 4 2 L20 2" stroke="#eeba50" stroke-width=".8" opacity=".6"/>
+    <rect x="8" y="8" width="7" height="7" transform="rotate(45 11.5 11.5)" fill="none" stroke="#eeba50" stroke-width="1"/>
+    <rect x="10.5" y="10.5" width="2" height="2" transform="rotate(45 11.5 11.5)" fill="#eeba50" opacity=".8"/>
+  </svg>
+  <svg class="corner br" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M2 20 L2 4 Q2 2 4 2 L20 2" stroke="#c08520" stroke-width="1.5"/>
+    <path d="M2 20 L2 4 Q2 2 4 2 L20 2" stroke="#eeba50" stroke-width=".8" opacity=".6"/>
+    <rect x="8" y="8" width="7" height="7" transform="rotate(45 11.5 11.5)" fill="none" stroke="#eeba50" stroke-width="1"/>
+    <rect x="10.5" y="10.5" width="2" height="2" transform="rotate(45 11.5 11.5)" fill="#eeba50" opacity=".8"/>
+  </svg>
+
+  <!-- Gold border -->
+  <svg class="ticket-border-svg" viewBox="0 0 680 390" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <linearGradient id="borderGrad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%"   stop-color="#c08520"/>
+        <stop offset="30%"  stop-color="#eeba50"/>
+        <stop offset="60%"  stop-color="#f7d98a"/>
+        <stop offset="100%" stop-color="#c08520"/>
+      </linearGradient>
+    </defs>
+    <rect x="28" y="18" width="624" height="354" rx="14"
+          fill="none" stroke="url(#borderGrad)" stroke-width="2.5"/>
+    <!-- Inner border -->
+    <rect x="32" y="22" width="616" height="346" rx="11"
+          fill="none" stroke="#eeba50" stroke-width=".6" opacity=".25"/>
   </svg>
 
 </div><!-- /ticket-wrap -->
 
-<!-- ── Boutons ── -->
+<!-- Buttons (standalone demo only — hidden when embedded in Next.js) -->
 <div class="actions">
-  <button class="btn btn-gold"    onclick="openModal()">Personnaliser le billet</button>
   <button class="btn btn-outline" onclick="window.print()">Imprimer / PDF</button>
 </div>
-
-<!-- ── Modale ── -->
-<div class="modal-overlay" id="modal" role="dialog" aria-modal="true" aria-label="Personnalisation du billet">
-  <div class="modal">
-    <h2>Personnaliser le billet</h2>
-    <div class="field">
-      <label for="inp-name">Nom complet</label>
-      <input id="inp-name" type="text" placeholder="Prénom NOM" value="Prénom NOM"/>
-    </div>
-    <div class="field">
-      <label for="inp-org">Organisation &amp; pays</label>
-      <input id="inp-org" type="text" placeholder="Organisation · Niger" value="Organisation · Niger"/>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal()">Annuler</button>
-      <button class="btn btn-gold"    onclick="applyModal()">Appliquer</button>
-    </div>
-  </div>
-</div>
-
-<script>
-  function openModal() {
-    document.getElementById('inp-name').value = document.getElementById('p-name').textContent;
-    document.getElementById('inp-org').value  = document.getElementById('p-org').textContent;
-    document.getElementById('modal').classList.add('open');
-    document.getElementById('inp-name').focus();
-  }
-  function closeModal() {
-    document.getElementById('modal').classList.remove('open');
-  }
-  function applyModal() {
-    const name = document.getElementById('inp-name').value.trim() || 'Prénom NOM';
-    const org  = document.getElementById('inp-org').value.trim()  || 'Organisation · Niger';
-    document.getElementById('p-name').textContent   = name;
-    document.getElementById('p-org').textContent    = org;
-    // Générer ref unique
-    const uid = Math.random().toString(36).substring(2,8).toUpperCase();
-    document.getElementById('ref-txt').textContent  = 'Réf. YCS3-' + uid + ' · youthconnektsahel.ne';
-    closeModal();
-  }
-  // Fermer modale en cliquant le fond
-  document.getElementById('modal').addEventListener('click', function(e){
-    if (e.target === this) closeModal();
-  });
-  // Échap
-  document.addEventListener('keydown', function(e){
-    if (e.key === 'Escape') closeModal();
-  });
-</script>
 
 </body>
 </html>

@@ -1,10 +1,14 @@
 import { getBlogPostsAction } from "@/actions/blog-actions";
 import { HeroSection } from "@/components/landing/HeroSection";
+import { HighlightsSection } from "@/components/landing/HighlightsSection";
 import { StatsSection } from "@/components/landing/StatsSection";
 import { AboutSection } from "@/components/landing/AboutSection";
 import { ProgrammesSection } from "@/components/landing/ProgrammesSection";
+import { ParcoursSection } from "@/components/landing/ParcoursSection";
+import { FeaturedEventSection } from "@/components/landing/FeaturedEventSection";
 import { NewsSection } from "@/components/landing/NewsSection";
 import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
+import { PartnersSection } from "@/components/landing/PartnersSection";
 import { ContactSection } from "@/components/landing/ContactSection";
 import type { PostPreview } from "@/components/landing/NewsSection";
 
@@ -36,11 +40,15 @@ export default async function HomePage() {
   return (
     <>
       <HeroSection />
+      <HighlightsSection />
       <StatsSection />
       <AboutSection />
       <ProgrammesSection />
+      <ParcoursSection />
+      <FeaturedEventSection />
       <NewsSection posts={posts} />
       <TestimonialsSection />
+      <PartnersSection />
       <ContactSection />
     </>
   );
