@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
    Date cible de l'événement
    → Modifie EVENT_DATE selon la vraie date
    ───────────────────────────────────────────── */
-const EVENT_DATE = new Date("2026-09-15T09:00:00");
+const EVENT_DATE = new Date("2026-08-10T09:00:00");
 
 interface TimeLeft {
   days: number;
@@ -97,9 +97,9 @@ export function FeaturedEventSection() {
                 <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-white/40">
                   Date de l&apos;événement
                 </p>
-                <p className="text-6xl font-black leading-none text-white">
-                  15{" "}
-                  <span className="text-secondary">Sept</span>
+                <p className="text-5xl font-black leading-none text-white">
+                  10{" "} 11 et 12
+                  <span className="text-secondary"> Aout</span>
                 </p>
                 <p className="mt-2 text-2xl font-bold text-white/60">2026</p>
               </div>

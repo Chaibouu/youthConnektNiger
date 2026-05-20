@@ -226,7 +226,7 @@ export function Navbar() {
         className={cn(
           "sticky top-0 z-50 w-full transition-all duration-500",
           transparent
-            ? "bg-gradient-to-b from-[#012e22]/80 via-[#012e22]/30 to-transparent"
+            ? "bg-primary"
             : "border-b border-border/40 bg-white/95 shadow-sm backdrop-blur-md"
         )}
       >
