@@ -81,3 +81,42 @@ body,
     @apply bg-background text-foreground;
   }
 }
+
+
+
+/* Infinite logo slider */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-250px * 4));
+  }
+}
+
+.logo-slider {
+  height: 150px;
+  margin: auto;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.logo-slider:hover .logo-slide-track {
+  animation-play-state: paused;
+}
+
+.logo-slide-track {
+  animation: scroll 20s linear infinite;
+  display: flex;
+  width: calc(250px * 8);
+}
+
+.logo-slide {
+  height: 150px;
+  width: 300px;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
