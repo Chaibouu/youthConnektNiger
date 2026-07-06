@@ -3,9 +3,18 @@ import appConfig from "@/settings";
 
 const domain = process.env.NEXT_PUBLIC_APP_URL;
 const emailUser = process.env.MAIL_AUTH_USER;
-const transporter = nodemailer.createTransport(
-  appConfig.mailOptions as TransportOptions
-);
+// const transporter = nodemailer.createTransport(
+//   appConfig.mailOptions as TransportOptions
+// );
+const transporter = nodemailer.createTransport({
+  host: process.env.MAIL_HOST,
+  port: Number(process.env.MAIL_PORT),
+  secure: true,
+  auth: {
+    user: process.env.MAIL_AUTH_USER,
+    pass: process.env.MAIL_AUTH_PASSWORD,
+  },
+});
 
 export const sendTwoFactorTokenEmail = async (email: string, token: string) => {
   const mailOptions = {
